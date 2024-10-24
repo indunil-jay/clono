@@ -18,26 +18,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-
-const formSchema = z.object({
-  email: z.string().trim().min(1, { message: "Email is required." }).email(),
-  password: z
-    .string()
-    .min(1, { message: "Password is required." })
-    .min(8, { message: "Password must be at least 8 characters required." })
-    .max(20, { message: "Password must be lesst then 20 characters." }),
-});
+import { SignInSchema } from "@/server/schemas";
+import { useLogin } from "@/server/auth/api/use-login";
 
 export const SingInCard = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SignInSchema>>({
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
+  const { mutate } = useLogin();
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {};
+  const onSubmit = (values: z.infer<typeof SignInSchema>) => {
+    mutate({ json: values });
+  };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
       <CardHeader className="flex items-center justify-center text-center p-7">
@@ -71,7 +67,7 @@ export const SingInCard = () => {
             />
             <FormField
               control={form.control}
-              name="email"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
