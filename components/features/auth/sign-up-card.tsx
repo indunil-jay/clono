@@ -162,6 +162,17 @@ export const SingUpCard = () => {
           Login with Github
         </Button>
       </CardContent>
+      <div className="px-7 ">
+        <DottedSeparator />
+      </div>
+      <CardContent className="p-7 flex items-center justify-center">
+        <p>
+          Already have an account ?{" "}
+          <Link href={"/sign-in"} className="text-blue-700">
+            Sign In
+          </Link>
+        </p>
+      </CardContent>
     </Card>
   );
 };

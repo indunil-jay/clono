@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().trim().min(1, { message: "Email is required." }).email(),
@@ -123,6 +124,17 @@ export const SingInCard = () => {
           <FaGithub className="mr-2 size-5" />
           Login with Github
         </Button>
+      </CardContent>
+      <div className="px-7 ">
+        <DottedSeparator />
+      </div>
+      <CardContent className="p-7 flex items-center justify-center">
+        <p>
+          Don&apos;t have an account ?{" "}
+          <Link href={"/sign-up"} className="text-blue-700">
+            Sign Up
+          </Link>
+        </p>
       </CardContent>
     </Card>
   );
