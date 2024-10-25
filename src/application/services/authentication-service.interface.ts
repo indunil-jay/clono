@@ -1,10 +1,24 @@
 import { User } from "@/src/entities/users";
-import { SignUpFormInput } from "@/src/interface-adapter/validation-schemas/auth";
+import {
+  SignInFormInput,
+  SignUpFormInput,
+} from "@/src/interface-adapter/validation-schemas/auth";
 import { Context } from "hono";
+import { Models } from "node-appwrite";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export interface IAuthenticationService {
-  getUser(): Promise<User>;
-  signInWithCredentials(email: string, password: string): Promise<void>;
-  signOut(): Promise<void>;
-  signUpWithCredentials(data: SignUpFormInput, ctx: Context): Promise<void>;
+  //TODO: make sure type
+  getUser(): Promise<Promise<Models.User<Models.Preferences>> | undefined>;
+
+  signInWithCredentials(
+    inputData: SignInFormInput,
+    ctx: Context
+  ): Promise<void>;
+
+  signOut(ctx: Context): Promise<void>;
+
+  signUpWithCredentials(
+    inputData: SignUpFormInput,
+    ctx: Context
+  ): Promise<void>;
 }

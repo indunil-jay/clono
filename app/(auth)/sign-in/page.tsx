@@ -1,9 +1,10 @@
 import { SingInCard } from "@/app/_components/features/auth/sign-in-card";
-import { getCurrent } from "@/src/auth/action";
+import { getInjection } from "@/DI/container";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const user = await getCurrent();
+  const authenticationService = getInjection("IAuthenticationService");
+  const user = await authenticationService.getUser();
   if (user) redirect("/");
   return (
     <>

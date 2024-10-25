@@ -23,12 +23,12 @@ import {
   FormMessage,
 } from "@/app/_components/ui/form";
 import Link from "next/link";
-import { SignInSchema } from "@/src/lib/schemas";
 import { useLogin } from "@/app/(auth)/_hooks/use-login";
+import { signInFormSchema } from "@/src/interface-adapter/validation-schemas/auth";
 
 export const SingInCard = () => {
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
+  const form = useForm<z.infer<typeof signInFormSchema>>({
+    resolver: zodResolver(signInFormSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -36,7 +36,7 @@ export const SingInCard = () => {
   });
   const { mutate } = useLogin();
 
-  const onSubmit = (values: z.infer<typeof SignInSchema>) => {
+  const onSubmit = (values: z.infer<typeof signInFormSchema>) => {
     mutate({ json: values });
   };
   return (

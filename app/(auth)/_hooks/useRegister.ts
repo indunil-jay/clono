@@ -16,7 +16,6 @@ export const useRegister = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {
       const response = await client.api.auth["sign-up"]["$post"]({ json });
-      console.log(response);
 
       return await response.json();
     },

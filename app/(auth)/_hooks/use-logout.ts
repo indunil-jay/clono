@@ -5,10 +5,10 @@ import { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.auth)["logout"]["$post"]
+  (typeof client.api.auth)["sign-out"]["$post"]
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.auth)["logout"]["$post"]
+  (typeof client.api.auth)["sign-out"]["$post"]
 >;
 
 export const useLogout = () => {
@@ -16,7 +16,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async () => {
-      const response = await client.api.auth["logout"]["$post"]();
+      const response = await client.api.auth["sign-out"]["$post"]();
       return await response.json();
     },
     onSuccess: () => {
