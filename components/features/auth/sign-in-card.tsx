@@ -18,8 +18,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-import { SignInSchema } from "@/server/schemas";
-import { useLogin } from "@/server/auth/api/use-login";
+import { SignInSchema } from "@/src/schemas";
+import { useLogin } from "@/src/auth/api/use-login";
 
 export const SingInCard = () => {
   const form = useForm<z.infer<typeof SignInSchema>>({

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
-import auth from "@/server/auth/route";
+import auth from "@/src/auth/route";
 
 export const runtime = "edge";
 

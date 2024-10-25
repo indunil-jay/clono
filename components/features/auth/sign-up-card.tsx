@@ -23,22 +23,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const formSchema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters." }),
-  email: z.string().trim().min(1, { message: "Email is required." }).email(),
-  password: z
-    .string()
-    .min(1, { message: "Password is required." })
-    .min(8, { message: "Password must be at least 8 characters required." })
-    .max(20, { message: "Password must be lesst then 20 characters." }),
-});
+import { SignUpSchema } from "@/src/schemas";
+import { useRegister } from "@/src/auth/api/use-register";
 
 export const SingUpCard = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -46,7 +36,11 @@ export const SingUpCard = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {};
+  const { mutate } = useRegister();
+
+  const onSubmit = (values: z.infer<typeof SignUpSchema>) => {
+    mutate({ json: values });
+  };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
       <CardHeader className="flex items-center justify-center text-center p-7">
@@ -109,7 +103,7 @@ export const SingUpCard = () => {
             />
             <FormField
               control={form.control}
-              name="email"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Enter Password</FormLabel>
