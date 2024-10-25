@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { Account, Client } from "node-appwrite";
-import { AUTH_COOKIE } from "./constants";
+import { AUTH_COOKIE } from "../lib/constants";
 
 export const getCurrent = async () => {
   try {
@@ -9,6 +9,7 @@ export const getCurrent = async () => {
       .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
     const session = (await cookies()).get(AUTH_COOKIE);
+
     if (!session) return null;
 
     client.setSession(session?.value);
@@ -17,6 +18,7 @@ export const getCurrent = async () => {
 
     return await account.get();
   } catch (error) {
+    console.log(error);
     return null;
   }
 };

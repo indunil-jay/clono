@@ -1,10 +1,13 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
-import auth from "@/src/auth/route";
+import auth from "@/src/routes/auth.routes";
 
-export const runtime = "edge";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+// export const runtime = "edge";
 
 const app = new Hono().basePath("/api");
+
 const routes = app.route("/auth", auth);
 
 export const GET = handle(app);

@@ -1,4 +1,6 @@
-import { UserButton } from "@/components/features/auth/user-button";
+import "reflect-metadata";
+
+import { UserButton } from "@/app/_components/features/auth/user-button";
 import { getCurrent } from "@/src/auth/action";
 import { redirect } from "next/navigation";
 

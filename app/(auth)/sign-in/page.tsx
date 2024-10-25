@@ -1,4 +1,4 @@
-import { SingInCard } from "@/components/features/auth/sign-in-card";
+import { SingInCard } from "@/app/_components/features/auth/sign-in-card";
 import { getCurrent } from "@/src/auth/action";
 import { redirect } from "next/navigation";
 
