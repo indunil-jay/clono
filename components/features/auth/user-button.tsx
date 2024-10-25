@@ -1,3 +1,4 @@
+"use client";
 import { DottedSeparator } from "@/components/custom/dotted-separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
