@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { SingUpCard } from "@/app/_components/features/auth/sign-up-card";
-import { getCurrent } from "../action";
+import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 
 export default async function Page() {
-  const user = await getCurrent();
+  const user = await getCurrentSessionUser();
 
   if (user) {
     redirect("/");

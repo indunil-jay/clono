@@ -4,7 +4,7 @@ import { Account, Client } from "node-appwrite";
 
 //TODO: filename should change becaus  this is not a action
 // error handle
-export const getCurrent = async () => {
+export const getCurrentSessionUser = async () => {
   try {
     const client = new Client()
       .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)

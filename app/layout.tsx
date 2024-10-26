@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Providers from "./provider";
+import Providers from "@/app/_lib/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jira clone",
+  title: "clono",
 };
 
 export default function RootLayout({

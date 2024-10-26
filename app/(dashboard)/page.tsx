@@ -1,11 +1,9 @@
-import "reflect-metadata";
-
 import { UserButton } from "@/app/_components/features/auth/user-button";
 import { redirect } from "next/navigation";
-import { getCurrent } from "./(auth)/action";
+import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 
-export default async function Home() {
-  const user = await getCurrent();
+export default async function Page() {
+  const user = await getCurrentSessionUser();
 
   if (!user) redirect("/sign-in");
   return (
