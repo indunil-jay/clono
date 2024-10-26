@@ -1,4 +1,5 @@
 import { Sidebar } from "@/app/_components/features/dashboard/sidebar";
+import { HeaderNavbar } from "../_components/features/dashboard/header-navbar";
 
 export default function DashBoardLayout({
   children,
@@ -12,8 +13,9 @@ export default function DashBoardLayout({
           <Sidebar />
         </div>
 
-        <div className="lg:pl-[264px]">
+        <div className="lg:pl-[264px] w-full">
           <div className="mx-auto max-w-screen-2xl h-full">
+            <HeaderNavbar />
             <main className="h-full py-8 px-6 flex flex-col">{children}</main>
           </div>
         </div>

@@ -6,9 +6,5 @@ export default async function Page() {
   const user = await getCurrentSessionUser();
 
   if (!user) redirect("/sign-in");
-  return (
-    <div>
-      <UserButton />
-    </div>
-  );
+  return <div>home page</div>;
 }
