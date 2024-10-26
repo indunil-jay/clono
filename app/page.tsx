@@ -2,11 +2,10 @@ import "reflect-metadata";
 
 import { UserButton } from "@/app/_components/features/auth/user-button";
 import { redirect } from "next/navigation";
-import { getInjection } from "@/DI/container";
+import { getCurrent } from "./(auth)/action";
 
 export default async function Home() {
-  const authenticationService = getInjection("IAuthenticationService");
-  const user = await authenticationService.getUser();
+  const user = await getCurrent();
 
   if (!user) redirect("/sign-in");
   return (
