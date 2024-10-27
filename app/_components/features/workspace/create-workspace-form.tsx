@@ -16,6 +16,10 @@ import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { DottedSeparator } from "../../custom/dotted-separator";
 import { useCreateWorkspace } from "./hooks/useCreateWorkspace";
+import { useRef } from "react";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import Image from "next/image";
+import { ImageIcon } from "lucide-react";
 
 //interface CreateWorkspaceFormProps {}
 
@@ -26,11 +30,34 @@ export const CreateWorkspaceForm = () => {
     resolver: zodResolver(createWorkspaceSchemaForm),
     defaultValues: {
       name: "",
+      image: "",
     },
   });
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      form.setValue("image", file);
+    }
+  };
+
   const onSubmit = (values: z.infer<typeof createWorkspaceSchemaForm>) => {
-    mutate({ json: values });
+    //TODO:error handle and redirection to workspace
+    const formData = {
+      ...values,
+      image: values.image instanceof File ? values.image : "",
+    };
+    mutate(
+      { form: formData },
+      {
+        onSuccess: () => {
+          form.reset();
+        },
+      }
+    );
   };
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -56,6 +83,66 @@ export const CreateWorkspaceForm = () => {
                         {...field}
                         disabled={isPending}
                       />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex flex-col gap-y-2">
+                        <div className="flex items-center gap-x-5">
+                          {field.value ? (
+                            <div className="size-[72px] relative rounded-md overflow-hidden">
+                              <Image
+                                alt="workspace logo"
+                                fill
+                                className="object-cover"
+                                src={
+                                  field.value instanceof File
+                                    ? URL.createObjectURL(field.value)
+                                    : field.value
+                                }
+                              />
+                            </div>
+                          ) : (
+                            <Avatar className="size-[72px]">
+                              <AvatarFallback>
+                                <ImageIcon className="size-[36px] text-neutral-400" />
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                          <div className="flex flex-col">
+                            <p className="text-sm">workspace Icon</p>
+                            <p className="text-xs text-muted-foreground">
+                              JPG, PNG, SVG, JPEG, max 1 MB
+                            </p>
+                            <input
+                              className="hidden"
+                              type="file"
+                              about=".png, .jpg, .jpeg, .svg"
+                              ref={inputRef}
+                              disabled={isPending}
+                              onChange={handleImageChange}
+                            />
+                            <Button
+                              type="button"
+                              disabled={isPending}
+                              variant={"secondary"}
+                              size={"sm"}
+                              className="w-fit mt-2"
+                              onClick={() => inputRef.current?.click()}
+                            >
+                              Upload Image
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </FormControl>
 
                     <FormMessage />
