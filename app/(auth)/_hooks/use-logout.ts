@@ -24,8 +24,10 @@ export const useLogout = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["current"] });
+    onSuccess: async () => {
+      //await queryClient.invalidateQueries({ queryKey: ["current"] });
+      queryClient.removeQueries();
+
       router.refresh();
     },
   });
