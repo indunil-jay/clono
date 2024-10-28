@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "../_components/custom/logo";
-import { UserButton } from "../_components/features/auth/user-button";
+import { UserButton } from "../_features/auth/user-button";
 
 export default function RootLayout({
   children,

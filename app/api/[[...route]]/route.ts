@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import auth from "@/src/routes/auth.routes";
-import workspaces from "@/app/_components/features/workspace/route";
+import workspaces from "@/app/_features/workspace/route";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 

@@ -1,6 +1,6 @@
-import { Sidebar } from "@/app/_components/features/dashboard/sidebar";
-import { HeaderNavbar } from "../_components/features/dashboard/header-navbar";
-import { CreateWorkSpaceModal } from "../_components/features/workspace/create-workspace-modal";
+import { Sidebar } from "@/app/_features/dashboard/sidebar";
+import { HeaderNavbar } from "../_features/dashboard/header-navbar";
+import { CreateWorkSpaceModal } from "../_features/workspace/create-workspace-modal";
 
 export default function DashBoardLayout({
   children,

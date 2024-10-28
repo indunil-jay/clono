@@ -6,6 +6,8 @@ import {
 } from "@/src/lib/constants";
 import { cookies } from "next/headers";
 import { Account, Client, Databases, Query } from "node-appwrite";
+import { getMember } from "../members/utils";
+import { Workspace } from "./types";
 
 export const generateInviteCode = (length: number) => {
   const characters =
@@ -57,5 +59,49 @@ export const getCurrentWorkspace = async () => {
     return workspaces;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getWorkspaceById = async ({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) => {
+  //TODO: proper error handle
+  try {
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+
+    const session = (await cookies()).get(AUTH_COOKIE);
+
+    // console.log(session);
+    if (!session || !session.value) return null;
+    client.setSession(session.value);
+
+    //TODO:
+    const databases = new Databases(client);
+    const account = new Account(client);
+    const user = await account.get();
+
+    const members = getMember({
+      databases,
+      userId: user.$id,
+      workspaceId,
+    });
+
+    if (!members) {
+      return null;
+    }
+    const workspaces = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId
+    );
+
+    return workspaces;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };

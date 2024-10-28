@@ -1,4 +1,4 @@
-import { SingInCard } from "@/app/_components/features/auth/sign-in-card";
+import { SingInCard } from "@/app/_features/auth/sign-in-card";
 import { redirect } from "next/navigation";
 import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 

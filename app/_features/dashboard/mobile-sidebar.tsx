@@ -2,7 +2,7 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/app/_components/ui/sheet";
 import { Button } from "@/app/_components/ui/button";
 import { MenuIcon } from "lucide-react";
-import { Sidebar } from "@/app/_components/features/dashboard/sidebar";
+import { Sidebar } from "@/app/_features/dashboard/sidebar";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 

@@ -1,4 +1,4 @@
-import { CreateWorkspaceForm } from "@/app/_components/features/workspace/create-workspace-form";
+import { CreateWorkspaceForm } from "@/app/_features/workspace/create-workspace-form";
 import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 import { redirect } from "next/navigation";
 

@@ -5,7 +5,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "../../_components/ui/select";
 import { useGetWorkspaces } from "./hooks/useGetWorkspace";
 import { RiAddCircleFill } from "react-icons/ri";
 import { WorkspaceAvatar } from "./workspace-avatar";

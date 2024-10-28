@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/app/_components/custom/logo";
-import { DottedSeparator } from "../../custom/dotted-separator";
+import { DottedSeparator } from "../../_components/custom/dotted-separator";
 import { Navigation } from "./navigation";
 import { WorkspaceSwitcher } from "../workspace/workspace-switcher";
 

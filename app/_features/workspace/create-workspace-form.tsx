@@ -8,16 +8,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
+} from "../../_components/ui/form";
 import { createWorkspaceSchemaForm } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { DottedSeparator } from "../../custom/dotted-separator";
+import { Input } from "../../_components/ui/input";
+import { Button } from "../../_components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../_components/ui/card";
+import { DottedSeparator } from "../../_components/custom/dotted-separator";
 import { useCreateWorkspace } from "./hooks/useCreateWorkspace";
 import { useRef } from "react";
-import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
