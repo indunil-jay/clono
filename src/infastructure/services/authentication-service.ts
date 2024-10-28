@@ -19,6 +19,7 @@ import { Account, Client, ID, Models } from "node-appwrite";
 export class AuthenticationService implements IAuthenticationService {
   constructor() {}
 
+  //TODO: change this give use session
   public async getUser(): Promise<
     Promise<Models.User<Models.Preferences>> | undefined
   > {
