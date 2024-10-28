@@ -10,6 +10,7 @@ import {
 } from "@/src/lib/constants";
 import { ID, Query } from "node-appwrite";
 import { MemberRole } from "../members/types";
+import { generateInviteCode } from "./utils";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (ctx) => {
@@ -81,6 +82,7 @@ const app = new Hono()
           name,
           userId: user.$id,
           imageUrl: uploadedImageUrl,
+          inviteCode: generateInviteCode(10),
         }
       );
 
