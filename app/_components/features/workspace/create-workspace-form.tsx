@@ -30,7 +30,6 @@ export const CreateWorkspaceForm = () => {
     resolver: zodResolver(createWorkspaceSchemaForm),
     defaultValues: {
       name: "",
-      image: "",
     },
   });
 
@@ -48,7 +47,7 @@ export const CreateWorkspaceForm = () => {
     //TODO:error handle and redirection to workspace
     const formData = {
       ...values,
-      image: values.image instanceof File ? values.image : "",
+      image: values.image instanceof File ? values.image : undefined,
     };
     mutate(
       { form: formData },
@@ -93,60 +92,54 @@ export const CreateWorkspaceForm = () => {
                 control={form.control}
                 name="image"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex flex-col gap-y-2">
-                        <div className="flex items-center gap-x-5">
-                          {field.value ? (
-                            <div className="size-[72px] relative rounded-md overflow-hidden">
-                              <Image
-                                alt="workspace logo"
-                                fill
-                                className="object-cover"
-                                src={
-                                  field.value instanceof File
-                                    ? URL.createObjectURL(field.value)
-                                    : field.value
-                                }
-                              />
-                            </div>
-                          ) : (
-                            <Avatar className="size-[72px]">
-                              <AvatarFallback>
-                                <ImageIcon className="size-[36px] text-neutral-400" />
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex flex-col">
-                            <p className="text-sm">workspace Icon</p>
-                            <p className="text-xs text-muted-foreground">
-                              JPG, PNG, SVG, JPEG, max 1 MB
-                            </p>
-                            <input
-                              className="hidden"
-                              type="file"
-                              about=".png, .jpg, .jpeg, .svg"
-                              ref={inputRef}
-                              disabled={isPending}
-                              onChange={handleImageChange}
-                            />
-                            <Button
-                              type="button"
-                              disabled={isPending}
-                              variant={"secondary"}
-                              size={"sm"}
-                              className="w-fit mt-2"
-                              onClick={() => inputRef.current?.click()}
-                            >
-                              Upload Image
-                            </Button>
-                          </div>
+                  <div className="flex flex-col gap-y-2">
+                    <div className="flex items-center gap-x-5">
+                      {field.value ? (
+                        <div className="size-[72px] relative rounded-md overflow-hidden">
+                          <Image
+                            alt="workspace logo"
+                            fill
+                            className="object-cover"
+                            src={
+                              field.value instanceof File
+                                ? URL.createObjectURL(field.value)
+                                : field.value
+                            }
+                          />
                         </div>
+                      ) : (
+                        <Avatar className="size-[72px]">
+                          <AvatarFallback>
+                            <ImageIcon className="size-[36px] text-neutral-400" />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div className="flex flex-col">
+                        <p className="text-sm">workspace Icon</p>
+                        <p className="text-xs text-muted-foreground">
+                          JPG, PNG, SVG, JPEG, max 1 MB
+                        </p>
+                        <input
+                          className="hidden"
+                          type="file"
+                          about=".png, .jpg, .jpeg, .svg"
+                          ref={inputRef}
+                          disabled={isPending}
+                          onChange={handleImageChange}
+                        />
+                        <Button
+                          type="button"
+                          disabled={isPending}
+                          variant={"secondary"}
+                          size={"sm"}
+                          className="w-fit mt-2"
+                          onClick={() => inputRef.current?.click()}
+                        >
+                          Upload Image
+                        </Button>
                       </div>
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
+                    </div>
+                  </div>
                 )}
               />
             </div>
