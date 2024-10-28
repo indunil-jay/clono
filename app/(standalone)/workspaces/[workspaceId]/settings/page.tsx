@@ -11,10 +11,11 @@ interface WorkspaceIdSettingsPageProps {
 
 export default async function Page({ params }: WorkspaceIdSettingsPageProps) {
   const user = await getCurrentSessionUser();
+  const { workspaceId } = await params;
   if (!user) redirect("/sign-in");
 
   const initialValues = await getWorkspaceById({
-    workspaceId: params.workspaceId,
+    workspaceId,
   });
 
   //TODO: check again and  handle proper erro

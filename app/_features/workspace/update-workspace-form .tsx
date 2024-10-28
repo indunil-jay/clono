@@ -20,14 +20,13 @@ import {
   CardTitle,
 } from "../../_components/ui/card";
 import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { useCreateWorkspace } from "./hooks/useCreateWorkspace";
 import { useRef } from "react";
 import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
 import Image from "next/image";
-import { ImageIcon } from "lucide-react";
+import { ArrowLeft, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/app/_lib/utils";
 import { Workspace } from "./types";
+import { useUpdateWorkspace } from "./hooks/useUpdateWorkspace";
 
 interface UpdateWorkspaceFormProps {
   onCancle?: () => void;
@@ -38,7 +37,7 @@ export const UpdateWorkspaceForm = ({
   onCancle,
   initialValues,
 }: UpdateWorkspaceFormProps) => {
-  const { mutate, isPending } = useCreateWorkspace();
+  const { mutate, isPending } = useUpdateWorkspace();
 
   const form = useForm<z.infer<typeof updateWorkspaceSchemaForm>>({
     resolver: zodResolver(updateWorkspaceSchemaForm),
@@ -63,7 +62,7 @@ export const UpdateWorkspaceForm = ({
     //TODO:error handle and redirection to workspace
     const formData = {
       ...values,
-      image: values.image instanceof File ? values.image : undefined,
+      image: values.image instanceof File ? values.image : "",
     };
     mutate(
       { form: formData, param: { workspaceId: initialValues.$id } },
@@ -78,7 +77,15 @@ export const UpdateWorkspaceForm = ({
   };
   return (
     <Card className="w-full h-full border-none shadow-none">
-      <CardHeader className="flex p-7">
+      <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
+        <Button
+          size={"sm"}
+          variant={"secondary"}
+          onClick={onCancle ? onCancle : () => router.back()}
+        >
+          <ArrowLeft className="size-4 mr-1" />
+          Back
+        </Button>
         <CardTitle>{initialValues.name}</CardTitle>
       </CardHeader>
       <div className="px-7">
@@ -164,18 +171,8 @@ export const UpdateWorkspaceForm = ({
             <DottedSeparator className="py-7" />
 
             <div className="flex items-center justify-between">
-              {/* better add back button TODO: */}
-              {/* <Button
-                type="button"
-                size={"lg"}
-                variant={"secondary"}
-                disabled={isPending}
-                className={cn(!onCancle && "invisible")}
-              >
-                Cancel
-              </Button> */}
               <Button type="submit" size={"lg"} disabled={isPending}>
-                Update Workspace
+                Save Changes
               </Button>
             </div>
           </form>

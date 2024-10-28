@@ -120,9 +120,12 @@ const app = new Hono()
       const { name, image } = ctx.req.valid("form");
 
       //check user allow to do action
-      const member = getMember({ databases, workspaceId, userId: user.$id });
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
 
-      //@ts-ignore
       if (!member || member.role !== MemberRole.ADMIN) {
         return ctx.json({ error: "Unauthorize" }, 401);
       }

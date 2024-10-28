@@ -84,7 +84,7 @@ export const getWorkspaceById = async ({
     const account = new Account(client);
     const user = await account.get();
 
-    const members = getMember({
+    const members = await getMember({
       databases,
       userId: user.$id,
       workspaceId,
