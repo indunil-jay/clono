@@ -29,7 +29,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
       .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
       .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-    const session = getCookie(c, AUTH_COOKIE);
+    const session = await getCookie(c, AUTH_COOKIE);
 
     if (!session) {
       return c.json({ error: "Unauthorized" }, 401);

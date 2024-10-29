@@ -12,7 +12,6 @@ import { ID, Query } from "node-appwrite";
 import { MemberRole } from "../members/types";
 import { generateInviteCode } from "./utils";
 import { getMember } from "../members/utils";
-import { error } from "console";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (ctx) => {
@@ -188,6 +187,33 @@ const app = new Hono()
       workspaceId
     );
     return ctx.json({ data: { $id: workspaceId } });
+  })
+  .post("/:workspaceId/reset-invite-code", sessionMiddleware, async (ctx) => {
+    const databases = ctx.get("databases");
+    const user = ctx.get("user");
+    const storage = ctx.get("storage");
+    const { workspaceId } = ctx.req.param();
+    //check user allow to do action
+    const member = await getMember({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
+
+    if (!member || member.role !== MemberRole.ADMIN) {
+      return ctx.json({ error: "Unauthorize" }, 401);
+    }
+
+    const workspace = await databases.updateDocument(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId,
+      {
+        inviteCode: generateInviteCode(10),
+      }
+    );
+
+    return ctx.json({ data: workspace });
   });
 
 export default app;

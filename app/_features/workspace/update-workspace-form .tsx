@@ -23,12 +23,14 @@ import { DottedSeparator } from "../../_components/custom/dotted-separator";
 import { useRef } from "react";
 import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
 import Image from "next/image";
-import { ArrowLeft, ImageIcon } from "lucide-react";
+import { ArrowLeft, CopyIcon, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Workspace } from "./types";
 import { useUpdateWorkspace } from "./hooks/useUpdateWorkspace";
 import { useDeleteWorkspace } from "./hooks/useDeleteWorkspace";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
+import { useToast } from "@/app/_hooks/use-toast";
+import { useUpdateInviteCodeWorkspace } from "./hooks/useUpdateInviteCodeWorkspace";
 
 interface UpdateWorkspaceFormProps {
   onCancle?: () => void;
@@ -81,15 +83,14 @@ export const UpdateWorkspaceForm = ({
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
     useDeleteWorkspace();
 
-  const [DialogModal, confirm] = useConfirmModal({
+  const [DeleteModal, confirmDelete] = useConfirmModal({
     title: "Delete Workspace",
     message: "This action cannot be undone",
     variant: "destructive",
   });
 
   const handleDelete = async () => {
-    const ok = await confirm();
-    console.log(ok);
+    const ok = await confirmDelete();
 
     if (!ok) return;
 
@@ -102,9 +103,45 @@ export const UpdateWorkspaceForm = ({
       }
     );
   };
+
+  const { mutate: updateInviteLink, isPending: isUpdatingWorkspaceInviteID } =
+    useUpdateInviteCodeWorkspace();
+
+  const [ResetModal, confirmReset] = useConfirmModal({
+    title: "Reset Workspace",
+    message: "This will invalidate the current invite link.",
+    variant: "destructive",
+  });
+
+  const handleReset = async () => {
+    const ok = await confirmReset();
+
+    if (!ok) return;
+
+    updateInviteLink(
+      { param: { workspaceId: initialValues.$id } },
+      {
+        onSuccess: () => {
+          router.refresh();
+        },
+      }
+    );
+  };
+
+  const { toast } = useToast();
+  const inviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
+  const handleCopyInviteLink = () => {
+    navigator.clipboard.writeText(inviteLink).then(() =>
+      toast({
+        title: "Invite link copied to clipboard",
+      })
+    );
+  };
+
   return (
     <div className="flex flex-col gap-y-4">
-      <DialogModal />
+      <DeleteModal />
+      <ResetModal />
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
           <Button
@@ -224,6 +261,42 @@ export const UpdateWorkspaceForm = ({
               </div>
             </form>
           </Form>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full h-full border-none shadow-none">
+        <CardContent className="p-7">
+          <div className="flex flex-col">
+            <h3 className="font-bold">Invite Members</h3>
+            <p className="text-sm text-muted-foreground">
+              Use the invite link to add members to your workspace.
+            </p>
+            <div className="mt-4">
+              <div className="flex  items-center gap-x-2">
+                <Input disabled value={inviteLink} />
+                <Button
+                  className="size-12"
+                  variant={"secondary"}
+                  onClick={handleCopyInviteLink}
+                >
+                  <CopyIcon className="size-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DottedSeparator className="py-7" />
+          <div className="flex items-center justify-center">
+            <Button
+              className="mt-7 w-fit "
+              size={"sm"}
+              variant={"default"}
+              type="button"
+              disabled={isUpdatingWorkspaceInviteID}
+              onClick={handleReset}
+            >
+              Reset Invite Link
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

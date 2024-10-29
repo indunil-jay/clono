@@ -8,7 +8,7 @@ export default async function Page() {
   if (!user) redirect("/sign-in");
 
   const workspaces = await getCurrentWorkspace();
-  console.log(workspaces);
+
   if (workspaces?.total === 0) {
     redirect("/workspaces/create");
   } else {

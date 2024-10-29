@@ -6,9 +6,9 @@ export default async function Page({
 }: {
   params: { workspaceId: string };
 }) {
+  const { workspaceId } = await params;
   const user = await getCurrentSessionUser();
 
-  const { workspaceId } = params;
   if (!user) redirect("/sign-in");
   return <div>workspace id - {workspaceId}</div>;
 }
