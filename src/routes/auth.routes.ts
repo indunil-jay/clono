@@ -1,9 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { deleteCookie } from "hono/cookie";
-
 import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
-import { AUTH_COOKIE } from "@/src/lib/constants";
 import {
   signInFormSchema,
   signUpFormSchema,
