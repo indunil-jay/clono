@@ -1,6 +1,7 @@
 import { Sidebar } from "@/app/_features/dashboard/sidebar";
 import { HeaderNavbar } from "../_features/dashboard/header-navbar";
 import { CreateWorkSpaceModal } from "../_features/workspace/create-workspace-modal";
+import { CreateProjecteModal } from "../_features/projects/create-project-modal";
 
 export default function DashBoardLayout({
   children,
@@ -10,6 +11,7 @@ export default function DashBoardLayout({
   return (
     <div className="min-h-screen">
       <CreateWorkSpaceModal />
+      <CreateProjecteModal />
       <div className="flex w-full h-full">
         <div className="fixed left-0 top-0 bottom-0 hidden lg:block lg:w-[264px] h-full overflow-y-auto ">
           <Sidebar />

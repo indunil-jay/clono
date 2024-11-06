@@ -3,6 +3,7 @@ import { Logo } from "@/app/_components/custom/logo";
 import { DottedSeparator } from "../../_components/custom/dotted-separator";
 import { Navigation } from "./navigation";
 import { WorkspaceSwitcher } from "../workspace/workspace-switcher";
+import { Projects } from "../projects/projects";
 
 export const Sidebar = () => {
   return (
@@ -14,6 +15,7 @@ export const Sidebar = () => {
       <WorkspaceSwitcher />
       <DottedSeparator className="my-4" />
       <Navigation />
+      <Projects />
     </aside>
   );
 };

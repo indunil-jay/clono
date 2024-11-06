@@ -10,7 +10,6 @@ interface WorkspaceIdSettingsPageProps {
 
 export default async function Page({ params }: WorkspaceIdSettingsPageProps) {
   const user = await getCurrentSessionUser();
-  const { workspaceId } = await params;
   if (!user) redirect("/sign-in");
 
   return (
