@@ -1,3 +1,4 @@
+import { IWorkspacesRepository } from "@/src/application/repositories/workspaces.repository.interface";
 import { IAuthenticationService } from "@/src/application/services/authentication-service.interface";
 
 export const DI_SYMBOLS = {
@@ -5,6 +6,7 @@ export const DI_SYMBOLS = {
   IAuthenticationService: Symbol.for("IAuthenticationService"),
 
   // Repositories
+  IWorkspacesRepository: Symbol.for("IWorkspacesRepository"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -12,4 +14,5 @@ export interface DI_RETURN_TYPES {
   IAuthenticationService: IAuthenticationService;
 
   // Repositories
+  IWorkspacesRepository: IWorkspacesRepository;
 }
