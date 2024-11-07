@@ -9,7 +9,7 @@ import {
 import { useGetMembers } from "../members/hooks/useGetMember";
 import { useGetProjects } from "../projects/hooks/useGetProjetct";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { ListCheckIcon } from "lucide-react";
+import { ListCheckIcon, User } from "lucide-react";
 import { TaskStatus } from "./types";
 import { useTaskFilters } from "./hooks/useTaskFilters";
 
@@ -43,13 +43,16 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
     useTaskFilters();
 
   const onStatusChange = (value: string) => {
-    if (value === "all") {
-      setFilters({ status: null });
-    } else {
-      setFilters({ status: value as TaskStatus });
-    }
+    setFilters({ status: value === "all" ? null : (value as TaskStatus) });
   };
 
+  const onAssigneeChange = (value: string) => {
+    setFilters({ assigneeId: value === "all" ? null : (value as string) });
+  };
+
+  const onprojectChange = (value: string) => {
+    setFilters({ projectId: value === "all" ? null : (value as string) });
+  };
   if (isLoading) return null;
 
   return (
@@ -72,6 +75,27 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
           <SelectItem value={TaskStatus.IN_REVIEW}>In Review</SelectItem>
           <SelectItem value={TaskStatus.TODO}>Todo</SelectItem>
           <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select
+        defaultValue={assigneeId ?? undefined}
+        onValueChange={(value) => onAssigneeChange(value)}
+      >
+        <SelectTrigger className="w-full lg:w-auto h-8">
+          <div className="flex items-center pr-2">
+            <User className="size-4 mr-2" />
+            <SelectValue placeholder="all status" />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Assignees</SelectItem>
+          <SelectSeparator />
+
+          {memberOptions?.map((member) => (
+            <SelectItem key={member.value} value={member.value}>
+              {member.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
