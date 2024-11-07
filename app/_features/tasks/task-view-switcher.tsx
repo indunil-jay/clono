@@ -1,3 +1,4 @@
+"use client";
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -7,8 +8,10 @@ import {
   TabsTrigger,
 } from "@/app/_components/ui/tabs";
 import { PlusCircle } from "lucide-react";
+import { useCreateTaskModal } from "./hooks/useCreateTaskModal";
 
 export const TaskViewSwitcher = () => {
+  const { open } = useCreateTaskModal();
   return (
     <Tabs className="flex-1 w-full border rounded-lg">
       <div className="h-full flex flex-col overflow-auto p-4">
@@ -25,7 +28,7 @@ export const TaskViewSwitcher = () => {
             </TabsTrigger>
           </TabsList>
 
-          <Button>
+          <Button onClick={open}>
             <PlusCircle className="size-4 mr-2" />
             New
           </Button>

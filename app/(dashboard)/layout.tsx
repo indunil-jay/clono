@@ -2,6 +2,7 @@ import { Sidebar } from "@/app/_features/dashboard/sidebar";
 import { HeaderNavbar } from "../_features/dashboard/header-navbar";
 import { CreateWorkSpaceModal } from "../_features/workspace/create-workspace-modal";
 import { CreateProjecteModal } from "../_features/projects/create-project-modal";
+import { CreateTaskModal } from "../_features/tasks/create-task-modal";
 
 export default function DashBoardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashBoardLayout({
     <div className="min-h-screen">
       <CreateWorkSpaceModal />
       <CreateProjecteModal />
+      <CreateTaskModal />
       <div className="flex w-full h-full">
         <div className="fixed left-0 top-0 bottom-0 hidden lg:block lg:w-[264px] h-full overflow-y-auto ">
           <Sidebar />
