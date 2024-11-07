@@ -3,48 +3,44 @@ import { InferRequestType, InferResponseType } from "hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/src/lib/honojs/rpc";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"],
+  (typeof client.api.projects)[":projectId"]["$delete"],
   200
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"]
+  (typeof client.api.projects)[":projectId"]["$delete"]
 >;
 
-export const useUpdateWorkspace = () => {
+export const useDeleteProject = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async ({ form, param }) => {
-      const response = await client.api.workspaces[":workspaceId"]["$patch"]({
-        form,
+    mutationFn: async ({ param }) => {
+      const response = await client.api.projects[":projectId"]["$delete"]({
         param,
       });
+
       if (!response.ok) {
-        throw new Error("Failed to update workspace.");
+        throw new Error("Failed to delete project");
       }
       return await response.json();
     },
     onSuccess: async ({ data }) => {
-      //toast.success("Workspace created");
+      //toast.success("project created");
       toast({
-        title: "Workspace updated",
+        title: "project deleted",
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["workspaces", "workspace", data.$id],
+        queryKey: ["projects", data.$id],
       });
-
-      router.refresh();
     },
     onError: () => {
-      // toast.error("Failed to create workspace");
+      // toast.error("Failed to create project");
       toast({
-        title: "Failed to create workspace",
+        title: "Failed to delete project",
       });
     },
   });

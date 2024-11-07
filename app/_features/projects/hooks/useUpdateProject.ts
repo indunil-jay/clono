@@ -6,47 +6,45 @@ import { useToast } from "@/app/_hooks/use-toast";
 import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"],
+  (typeof client.api.projects)[":projectId"]["$patch"],
   200
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"]
+  (typeof client.api.projects)[":projectId"]["$patch"]
 >;
 
-export const useUpdateWorkspace = () => {
+export const useUpdateProject = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ form, param }) => {
-      const response = await client.api.workspaces[":workspaceId"]["$patch"]({
+      // Ensure this method returns a valid JSON response
+      const response = await client.api.projects[":projectId"]["$patch"]({
         form,
         param,
       });
-      if (!response.ok) {
-        throw new Error("Failed to update workspace.");
-      }
-      return await response.json();
+      return await response.json(); // Adjust if needed
     },
     onSuccess: async ({ data }) => {
-      //toast.success("Workspace created");
       toast({
-        title: "Workspace updated",
+        title: "Project upated",
       });
 
+      // Invalidate the projects query to refetch data
       await queryClient.invalidateQueries({
-        queryKey: ["workspaces", "workspace", data.$id],
+        queryKey: ["projects", "project", data.$id],
       });
 
       router.refresh();
     },
     onError: () => {
-      // toast.error("Failed to create workspace");
       toast({
-        title: "Failed to create workspace",
+        title: "Failed to upated project",
       });
     },
   });
+
   return mutation;
 };

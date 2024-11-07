@@ -70,7 +70,7 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
         onSuccess: ({ data }) => {
           form.reset();
           //onCancle?.(); router clear up url,
-          //router.push(`/workspaces/${data.$id}`);
+          router.push(`/workspaces/${workspaceId}/projects/${data.$id}`);
         },
       }
     );

@@ -9,8 +9,8 @@ import {
   PROJECTS_COLLECTION_ID,
 } from "@/src/lib/constants";
 import { ID, Query } from "node-appwrite";
-import { error } from "console";
-import { createProjectSchemaForm } from "./schema";
+import { createProjectSchemaForm, updateProjectSchemaForm } from "./schema";
+import { Project } from "./types";
 
 const app = new Hono()
   .get(
@@ -102,6 +102,92 @@ const app = new Hono()
 
       return ctx.json({ data: project });
     }
-  );
+  )
+  .patch(
+    "/:projectId",
+    sessionMiddleware,
+    zValidator("form", updateProjectSchemaForm),
+    async (ctx) => {
+      //
+      const databases = ctx.get("databases");
+      const user = ctx.get("user");
+      const storage = ctx.get("storage");
+
+      // get projectId from param
+      const { projectId } = ctx.req.param();
+
+      //get validated form data
+      const { name, image } = ctx.req.valid("form");
+
+      const exisitingProject = await databases.getDocument<Project>(
+        DATABASE_ID,
+        PROJECTS_COLLECTION_ID,
+        projectId
+      );
+
+      //check user allow to do action
+      const member = await getMember({
+        databases,
+        workspaceId: exisitingProject.workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return ctx.json({ error: "Unauthorize" }, 401);
+      }
+
+      //submitting process
+      let uploadedImageUrl: string | undefined = undefined;
+
+      //TODO:error handle
+      //rollback  mechanism for database operation
+      if (image instanceof File) {
+        const file = await storage.createFile(
+          IMAGE_BUCKET_ID,
+          ID.unique(),
+          image
+        );
+
+        const arrayBuffer = await storage.getFilePreview(
+          IMAGE_BUCKET_ID,
+          file.$id
+        );
+
+        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
+          arrayBuffer
+        ).toString("base64")}`;
+      } else {
+        uploadedImageUrl = image;
+      }
+
+      const project = await databases.updateDocument(
+        DATABASE_ID,
+        PROJECTS_COLLECTION_ID,
+        projectId,
+        { name, imageUrl: uploadedImageUrl }
+      );
+
+      return ctx.json({ data: project });
+    }
+  )
+  .delete("/:projectId", sessionMiddleware, async (ctx) => {
+    const databases = ctx.get("databases");
+    const user = ctx.get("user");
+    const storage = ctx.get("storage");
+    const { projectId } = ctx.req.param();
+
+    const exisitingProject = await databases.getDocument<Project>(
+      DATABASE_ID,
+      PROJECTS_COLLECTION_ID,
+      projectId
+    );
+
+    await databases.deleteDocument(
+      DATABASE_ID,
+      PROJECTS_COLLECTION_ID,
+      projectId
+    );
+    return ctx.json({ data: { $id: projectId } });
+  });
 
 export default app;

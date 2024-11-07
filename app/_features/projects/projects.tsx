@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/app/_lib/utils";
 import { useCreateProjectModal } from "./hooks/useCreateProjectModal";
+import { ProjectAvatar } from "./project-avatar";
 
 export const Projects = () => {
   const workspaceId = useWorkspaceId();
@@ -26,8 +27,7 @@ export const Projects = () => {
       </div>
 
       {data?.data.documents.map((project) => {
-        const projectId = null;
-        const href = `/workspace/${workspaceId}/projects/${projectId}`;
+        const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
         const isActive = pathname === href;
 
         return (
@@ -38,6 +38,7 @@ export const Projects = () => {
                 isActive && "bg-white shadow-md hover:opacity-100 text-primary"
               )}
             >
+              <ProjectAvatar image={project.imageUrl} name={project.name} />
               <span className="truncate">{project.name}</span>
             </div>
           </Link>
