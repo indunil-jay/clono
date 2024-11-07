@@ -5,6 +5,7 @@ import workspace from "@/src/routes/workspaces.routes";
 import workspaces from "@/app/_features/workspace/route";
 import members from "@/app/_features/members/route";
 import projects from "@/app/_features/projects/route";
+import tasks from "@/app/_features/tasks/route";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -17,7 +18,8 @@ const routes = app
   .route("/workspaces", workspaces)
   .route("/workspaces", workspace)
   .route("/members", members)
-  .route("/projects", projects);
+  .route("/projects", projects)
+  .route("/tasks", tasks);
 
 export const GET = handle(app);
 export const POST = handle(app);

@@ -1,6 +1,7 @@
 import { Button } from "@/app/_components/ui/button";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { getProjectById } from "@/app/_features/projects/utils";
+import { TaskViewSwitcher } from "@/app/_features/tasks/task-view-switcher";
 import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
@@ -42,6 +43,7 @@ export default async function Page({
           </Button>
         </div>
       </div>
+      <TaskViewSwitcher />
     </div>
   );
 }
