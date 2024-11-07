@@ -4,7 +4,6 @@ import { getAllWorkspacesController } from "../interface-adapter/controllers/wor
 
 const app = new Hono().get("/", sessionMiddleware, async (ctx) => {
   const workspaces = await getAllWorkspacesController(ctx);
-  console.log("routes", workspaces);
   return ctx.json({ data: workspaces });
 });
 

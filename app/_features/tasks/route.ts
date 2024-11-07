@@ -174,10 +174,12 @@ const app = new Hono()
         ]
       );
 
-      const newPosition =
+      const newPosition: number =
         highestPostionTask.documents.length > 0
           ? highestPostionTask.documents[0].position + 1000
           : 1000;
+
+      console.log({ projectId });
 
       const task = await databases.createDocument(
         DATABASE_ID,
@@ -191,7 +193,7 @@ const app = new Hono()
           dueDate,
           assigneeId,
           description,
-          position: newPosition,
+          position: +newPosition,
         }
       );
 

@@ -19,7 +19,7 @@ export default async function Page({
 
   const project = await getProjectById({ projectId });
 
-  if (!project) throw new Error("Project not found");
+  if (!project) return;
   return (
     <div className="flex flex-col gap-y-4 ">
       <div className="flex items-center justify-between">

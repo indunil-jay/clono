@@ -24,6 +24,17 @@ import { cn } from "@/app/_lib/utils";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { createTaskSchema } from "./schemas";
 import { useCreateTask } from "./hooks/useCreateTask";
+import { DatePicker } from "@/app/_components/custom/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/_components/ui/select";
+import { MemberAvatar } from "../members/components/member-avatar";
+import { TaskStatus } from "./types";
+import { ProjectAvatar } from "../projects/project-avatar";
 
 interface CreateTasksFormProps {
   onCancle?: () => void;
@@ -54,9 +65,11 @@ export const CreateTaskForm = ({
       { json: { ...values, workspaceId } },
       {
         onSuccess: ({ data }) => {
+          console.log({ data });
           form.reset();
-          //onCancle?.(); router clear up url,
-          router.push(`/workspaces/${workspaceId}/projects/${data.$id}`);
+          router.push(
+            `/workspaces/${workspaceId}/projects/${values.projectId}`
+          );
         },
       }
     );
@@ -86,6 +99,133 @@ export const CreateTaskForm = ({
                         disabled={isPending}
                       />
                     </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Due Date</FormLabel>
+                    <FormControl>
+                      <DatePicker {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="assigneeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assignee</FormLabel>
+
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select assignee" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {memberOptions.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            <div className="flex items-center gap-x-2">
+                              <MemberAvatar
+                                className="size-6"
+                                name={member.name}
+                              />
+
+                              {member.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={TaskStatus.BACKLOG}>
+                          backlog
+                        </SelectItem>
+
+                        <SelectItem value={TaskStatus.IN_PROGRESS}>
+                          in progress
+                        </SelectItem>
+                        <SelectItem value={TaskStatus.IN_REVIEW}>
+                          in review
+                        </SelectItem>
+                        <SelectItem value={TaskStatus.TODO}>todo</SelectItem>
+                        <SelectItem value={TaskStatus.DONE}>done</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project</FormLabel>
+
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {projectOptions.map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex items-center gap-x-2">
+                              <ProjectAvatar
+                                className="size-6"
+                                name={project.name}
+                                image={project.imageUrl}
+                              />
+
+                              {project.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage />
                   </FormItem>
