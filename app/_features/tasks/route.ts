@@ -12,7 +12,7 @@ import {
   TASKS_COLLECTION_ID,
 } from "@/src/lib/constants";
 import { ID, Query } from "node-appwrite";
-import { TaskStatus } from "./types";
+import { Task, TaskStatus } from "./types";
 import { createAdminClient } from "@/src/lib/appwrite/appwrite";
 import { error } from "console";
 import { Project } from "../projects/types";
@@ -81,7 +81,7 @@ const app = new Hono()
         query.push(Query.search("name", search));
       }
 
-      const tasks = await databases.listDocuments(
+      const tasks = await databases.listDocuments<Task>(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         query
