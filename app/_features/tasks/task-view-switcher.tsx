@@ -23,7 +23,13 @@ import { useUpdateBulkTasks } from "./hooks/useUpdatebulkTasks";
 import { DataCalendar } from "./data-calendar";
 import "./data-calendar.css";
 
-export const TaskViewSwitcher = () => {
+interface TaskViewSwitcherProps {
+  hideProjectFilter?: boolean;
+}
+
+export const TaskViewSwitcher = ({
+  hideProjectFilter,
+}: TaskViewSwitcherProps) => {
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
   });
@@ -75,7 +81,7 @@ export const TaskViewSwitcher = () => {
         </div>
         <DottedSeparator className="mt-4" />
         {/* add filters */}
-        <DataFilters />
+        <DataFilters hideProjectFilter={hideProjectFilter} />
         <DottedSeparator className="mt-4" />
         {isLoadingTask ? (
           <div className="w-full border rounded-lg h-[200px] flex flex-col items-center  justify-center">
