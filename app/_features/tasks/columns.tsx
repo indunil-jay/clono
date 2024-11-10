@@ -8,7 +8,7 @@ import { MemberAvatar } from "../members/components/member-avatar";
 import { TaskDate } from "./task-date";
 import { Badge } from "@/app/_components/ui/badge";
 import { snakeCaseToTitleCase } from "./utils";
-import { TaskActions } from "./task-action";
+import { TaskActions } from "./task-actions";
 
 export const columns: ColumnDef<Task>[] = [
   {
