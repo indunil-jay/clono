@@ -6,7 +6,7 @@ import { createAdminClient } from "@/src/lib/appwrite/appwrite";
 import { getMember } from "./utils";
 import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
 import { Query } from "node-appwrite";
-import { MemberRole } from "./types";
+import { Member, MemberRole } from "./types";
 
 const app = new Hono()
   .get(
@@ -30,7 +30,7 @@ const app = new Hono()
         return ctx.json({ error: "Unauthorized" }, 401);
       }
 
-      const memebers = await databases.listDocuments(
+      const memebers = await databases.listDocuments<Member>(
         DATABASE_ID,
         MEMBERS_COLLECTION_ID,
         [Query.equal("workspaceId", workspaceId)]
