@@ -6,6 +6,7 @@ import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ProjectAnalitics } from "./client";
 
 export default async function Page({
   params,
@@ -43,6 +44,8 @@ export default async function Page({
           </Button>
         </div>
       </div>
+      <ProjectAnalitics projectId={projectId} />
+
       <TaskViewSwitcher />
     </div>
   );
