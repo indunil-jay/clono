@@ -43,6 +43,26 @@ const app = new Hono()
   //   return ctx.json({ data: workspaces });
   // })
 
+  .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
+    const user = ctx.get("user");
+    const databases = ctx.get("databases");
+    const { workspaceId } = ctx.req.param();
+
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId
+    );
+
+    return ctx.json({
+      data: {
+        $id: workspace.$id,
+        name: workspace.name,
+        imageUrl: workspace.imageUrl,
+      },
+    });
+  })
+
   .post(
     "/",
     zValidator("form", createWorkspaceSchemaForm),
