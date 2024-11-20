@@ -7,21 +7,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
-import { useCurrent } from "@/app/(auth)/_hooks/use-current";
-import { useLogout } from "@/app/(auth)/_hooks/use-logout";
+import { useCurrent } from "@/app/_features/auth/hooks/use-current";
+import { useLogout } from "@/app/_features/auth/hooks/use-logout";
 import { Loader, LogOut } from "lucide-react";
 
 export const UserButton = () => {
-  const { data: user, isLoading } = useCurrent();
-  const { mutate: logout } = useLogout();
+  const { data: user, status } = useCurrent();
 
-  if (isLoading) {
+  const { mutate: logout } = useLogout();
+  if (status === "pending") {
     return (
       <div className="size-10 rounded-full flex items-center justify-center border border-neutral-300">
         <Loader className="size-4 animate-spin text-muted-foreground" />
       </div>
     );
   }
+
+  //TODO: check later
+  if (status === "error") {
+    return null;
+  }
+
   if (!user) {
     return null;
   }
@@ -62,7 +68,7 @@ export const UserButton = () => {
         <DottedSeparator className="mb-1" />
 
         <DropdownMenuItem
-          onClick={() => logout({})}
+          onClick={() => logout({ json: {} })}
           className="h-10 flex items-center  justify-center text-amber-700 font-medium cursor-pointer"
         >
           <LogOut className="size-4 mr-2" /> Logout

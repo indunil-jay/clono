@@ -1,6 +1,6 @@
 import { UpdateWorkspaceForm } from "@/app/_features/workspace/update-workspace-form ";
 import { getWorkspaceById } from "@/app/_features/workspace/utils";
-import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
+import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
 import { redirect } from "next/navigation";
 
 interface WorkspaceIdSettingsPageProps {
@@ -10,7 +10,7 @@ interface WorkspaceIdSettingsPageProps {
 }
 
 export default async function Page({ params }: WorkspaceIdSettingsPageProps) {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUserSession();
   const { workspaceId } = await params;
   if (!user) redirect("/sign-in");
 

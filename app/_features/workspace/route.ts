@@ -19,32 +19,32 @@ import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { TaskStatus } from "../tasks/types";
 
 const app = new Hono()
-  // .get("/", sessionMiddleware, async (ctx) => {
-  //   const user = ctx.get("user");
-  //   const databases = ctx.get("databases");
+  .get("/", sessionMiddleware, async (ctx) => {
+    const user = ctx.get("user");
+    const databases = ctx.get("databases");
 
-  //   //all members, that current user part of
-  //   const members = await databases.listDocuments(
-  //     DATABASE_ID,
-  //     MEMBERS_COLLECTION_ID,
-  //     [Query.equal("userId", user.$id)]
-  //   );
+    //all members, that current user part of
+    const members = await databases.listDocuments(
+      DATABASE_ID,
+      MEMBERS_COLLECTION_ID,
+      [Query.equal("userId", user.$id)]
+    );
 
-  //   //return back if the login user not part of a worksace
-  //   if (members.total === 0) {
-  //     return ctx.json({ data: { documents: [], total: 0 } });
-  //   }
+    //return back if the login user not part of a worksace
+    if (members.total === 0) {
+      return ctx.json({ data: { documents: [], total: 0 } });
+    }
 
-  //   const workspaceIds = members.documents.map((member) => member.workspaceId);
+    const workspaceIds = members.documents.map((member) => member.workspaceId);
 
-  //   const workspaces = await databases.listDocuments(
-  //     DATABASE_ID,
-  //     WORKSPACE_COLLECTION_ID,
-  //     [Query.contains("$id", workspaceIds), Query.orderDesc("$createdAt")]
-  //   );
+    const workspaces = await databases.listDocuments(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      [Query.contains("$id", workspaceIds), Query.orderDesc("$createdAt")]
+    );
 
-  //   return ctx.json({ data: workspaces });
-  // })
+    return ctx.json({ data: workspaces });
+  })
 
   .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");

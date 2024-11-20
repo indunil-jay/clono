@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
 import { getCurrentWorkspace } from "../_features/workspace/utils";
+import { getCurrentUserSession } from "../_lib/getCurrentUserSession";
 
 export default async function Page() {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUserSession();
 
   if (!user) redirect("/sign-in");
 

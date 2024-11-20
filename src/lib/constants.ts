@@ -1,4 +1,4 @@
-export const AUTH_COOKIE = "test-cookie";
+export const AUTH_COOKIE = "session-cookie";
 
 export const DATABASE_ID = (process.env
   .NEXT_PUBLIC_APPWRITE_DATABASE_ID as string)!;

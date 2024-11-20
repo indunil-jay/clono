@@ -1,4 +1,3 @@
-import { AUTH_COOKIE } from "@/src/lib/constants";
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import {
@@ -13,6 +12,9 @@ import {
   Models,
 } from "node-appwrite";
 
+import { AUTH_COOKIE } from "@/src/lib/constants";
+import { createSessionClient } from "./appwrite";
+
 type AdditionalContext = {
   Variables: {
     account: AccountType;
@@ -24,29 +26,31 @@ type AdditionalContext = {
 };
 
 export const sessionMiddleware = createMiddleware<AdditionalContext>(
-  async (c, next) => {
+  async (ctx, next) => {
     const client = new Client()
       .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
       .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-    const session = await getCookie(c, AUTH_COOKIE);
+    const session = getCookie(ctx, AUTH_COOKIE);
 
     if (!session) {
-      return c.json({ error: "Unauthorized" }, 401);
+      return ctx.json({ success: false, error: "Unauthorized" }, 401);
     }
 
     client.setSession(session);
 
     const account = new Account(client);
-    const database = new Databases(client);
+    const databases = new Databases(client);
     const storage = new Storage(client);
 
+    //get session user
     const user = await account.get();
 
-    c.set("account", account);
-    c.set("databases", database);
-    c.set("storage", storage);
-    c.set("user", user);
+    ctx.set("account", account);
+    ctx.set("databases", databases);
+    ctx.set("storage", storage);
+    ctx.set("user", user);
+
     await next();
   }
 );

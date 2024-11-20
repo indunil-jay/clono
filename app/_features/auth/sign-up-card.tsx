@@ -1,4 +1,11 @@
 "use client";
+import Link from "next/link";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -9,12 +16,6 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import { Input } from "@/app/_components/ui/input";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
-import Link from "next/link";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -24,8 +25,9 @@ import {
   FormMessage,
 } from "@/app/_components/ui/form";
 
-import { useRegister } from "@/app/(auth)/_hooks/useRegister";
+import { useRegister } from "@/app/_features/auth/hooks/use-register";
 import { signUpFormSchema } from "@/src/interface-adapter/validation-schemas/auth";
+import { redirect } from "next/navigation";
 
 export const SingUpCard = () => {
   const form = useForm<z.infer<typeof signUpFormSchema>>({

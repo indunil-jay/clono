@@ -1,4 +1,4 @@
-import { client } from "@/src/lib/honojs/rpc";
+import { client } from "@/app/_lib/honojs/rpc";
 import { useQuery } from "@tanstack/react-query";
 
 interface UseGetTaskByIdProps {

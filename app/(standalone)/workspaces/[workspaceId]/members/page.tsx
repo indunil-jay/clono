@@ -1,5 +1,5 @@
 import { MembersList } from "@/app/_features/members/members-list";
-import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
+import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
 import { redirect } from "next/navigation";
 
 interface WorkspaceIdSettingsPageProps {
@@ -9,7 +9,7 @@ interface WorkspaceIdSettingsPageProps {
 }
 
 export default async function Page({ params }: WorkspaceIdSettingsPageProps) {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUserSession();
   if (!user) redirect("/sign-in");
 
   return (

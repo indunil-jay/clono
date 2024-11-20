@@ -1,4 +1,12 @@
 "use client";
+
+import Link from "next/link";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -8,12 +16,6 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import { Input } from "@/app/_components/ui/input";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
-
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -22,9 +24,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-import Link from "next/link";
-import { useLogin } from "@/app/(auth)/_hooks/use-login";
+
+import { useLogin } from "@/app/_features/auth/hooks/use-login";
 import { signInFormSchema } from "@/src/interface-adapter/validation-schemas/auth";
+import { Spinner } from "@/app/_components/custom/spinner";
 
 export const SingInCard = () => {
   const form = useForm<z.infer<typeof signInFormSchema>>({
@@ -34,7 +37,7 @@ export const SingInCard = () => {
       password: "",
     },
   });
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const onSubmit = (values: z.infer<typeof signInFormSchema>) => {
     mutate({ json: values });
@@ -61,7 +64,7 @@ export const SingInCard = () => {
                     <Input
                       type="email"
                       placeholder="alexmartin@gmail.com"
-                      disabled={false}
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -80,7 +83,7 @@ export const SingInCard = () => {
                     <Input
                       type="password"
                       placeholder="••••••••"
-                      disabled={false}
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -93,10 +96,10 @@ export const SingInCard = () => {
             <Button
               className="w-full"
               type="submit"
-              disabled={false}
+              disabled={isPending}
               size={"lg"}
             >
-              Login
+              {isPending ? <Spinner /> : "Login"}
             </Button>
           </form>
         </Form>
@@ -109,7 +112,7 @@ export const SingInCard = () => {
       <CardContent className="p-7 flex flex-col gap-y-4">
         <Button
           className="w-full"
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           variant={"secondary"}
         >
@@ -118,7 +121,7 @@ export const SingInCard = () => {
         </Button>
         <Button
           className="w-full"
-          disabled={false}
+          disabled={isPending}
           size={"lg"}
           variant={"secondary"}
         >

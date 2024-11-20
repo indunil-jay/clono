@@ -11,10 +11,8 @@ export const signInWithCredentialsController = async (
 ) => {
   const { data, error } = signInFormSchema.safeParse(input);
 
-  //error handle TODO:
   if (error) {
-    console.log(error);
-    throw new Error("signup error");
+    throw new Error("Validation error");
   }
 
   const authenticationService = getInjection("IAuthenticationService");

@@ -1,6 +1,6 @@
 import { UpdateProjectForm } from "@/app/_features/projects/update-project-form ";
 import { getProjectById } from "@/app/_features/projects/utils";
-import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
+import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
 import { redirect } from "next/navigation";
 
 export default async function Page({
@@ -8,7 +8,7 @@ export default async function Page({
 }: {
   params: { projectId: string };
 }) {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUserSession();
 
   if (!user) redirect("/sign-in");
 

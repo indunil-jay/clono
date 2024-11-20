@@ -2,7 +2,7 @@ import { Button } from "@/app/_components/ui/button";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { getProjectById } from "@/app/_features/projects/utils";
 import { TaskViewSwitcher } from "@/app/_features/tasks/task-view-switcher";
-import { getCurrentSessionUser } from "@/app/_lib/getCurrentSessionUser";
+import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -14,7 +14,7 @@ export default async function Page({
   params: { projectId: string };
 }) {
   const { projectId } = await params;
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUserSession();
 
   if (!user) redirect("/sign-in");
 
