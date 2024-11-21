@@ -13,7 +13,6 @@ import {
 } from "node-appwrite";
 
 import { AUTH_COOKIE } from "@/src/lib/constants";
-import { createSessionClient } from "./appwrite";
 
 type AdditionalContext = {
   Variables: {

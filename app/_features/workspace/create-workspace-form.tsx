@@ -1,6 +1,12 @@
 "use client";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { ImageIcon } from "lucide-react";
+
 import {
   Form,
   FormControl,
@@ -8,40 +14,38 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../_components/ui/form";
-import { createWorkspaceSchemaForm } from "./schema";
+} from "@/app/_components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../_components/ui/input";
-import { Button } from "../../_components/ui/button";
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { useCreateWorkspace } from "./hooks/useCreateWorkspace";
-import { useRef } from "react";
-import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
-import Image from "next/image";
-import { ImageIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+} from "@/app/_components/ui/card";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
+
+import { useCreateWorkspace } from "@/app/_features/workspace/hooks/useCreateWorkspace";
 import { cn } from "@/app/_lib/utils";
+import { createWorkspaceFormSchema } from "@/src/interface-adapter/validation-schemas/workspace";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 interface CreateWorkspaceFormProps {
   onCancle?: () => void;
 }
 
 export const CreateWorkspaceForm = ({ onCancle }: CreateWorkspaceFormProps) => {
-  const { mutate, isPending } = useCreateWorkspace();
-
-  const form = useForm<z.infer<typeof createWorkspaceSchemaForm>>({
-    resolver: zodResolver(createWorkspaceSchemaForm),
+  const form = useForm<z.infer<typeof createWorkspaceFormSchema>>({
+    resolver: zodResolver(createWorkspaceFormSchema),
     defaultValues: {
       name: "",
+      image: undefined,
     },
   });
 
+  const { mutate, isPending } = useCreateWorkspace();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -53,23 +57,27 @@ export const CreateWorkspaceForm = ({ onCancle }: CreateWorkspaceFormProps) => {
     }
   };
 
-  const onSubmit = (values: z.infer<typeof createWorkspaceSchemaForm>) => {
-    //TODO:error handle and redirection to workspace
+  const onSubmit = (values: z.infer<typeof createWorkspaceFormSchema>) => {
     const formData = {
       ...values,
       image: values.image instanceof File ? values.image : undefined,
     };
+
     mutate(
       { form: formData },
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //onCancle?.(); router clear up url,
-          router.push(`/workspaces/${data.$id}`);
+          router.push(`/workspaces/${data?.workspaceId}`);
+        },
+
+        onError: () => {
+          form.reset();
         },
       }
     );
   };
+
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
@@ -186,7 +194,14 @@ export const CreateWorkspaceForm = ({ onCancle }: CreateWorkspaceFormProps) => {
                 Cancel
               </Button>
               <Button type="submit" size={"lg"} disabled={isPending}>
-                Create Workspace
+                {isPending ? (
+                  <span className="flex gap-2 items-center">
+                    <span>Creating Workspace </span>
+                    <SpinnerCircle />
+                  </span>
+                ) : (
+                  "Create Workspace"
+                )}
               </Button>
             </div>
           </form>

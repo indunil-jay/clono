@@ -18,7 +18,6 @@ import Link from "next/link";
 import { useWorkspaceId } from "@/app/_features/workspace/hooks/useWorkspaceId";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { formatDistanceToNow } from "date-fns";
-import { useCreateProject } from "@/app/_features/projects/hooks/useCreateProject";
 import { Project } from "@/app/_features/projects/types";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { Member } from "@/app/_features/members/types";
@@ -119,10 +118,7 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
           projects={projects.data.documents}
           total={projects.data.total}
         />
-        <MembersList
-          members={members.data.documents}
-          total={members.data.total}
-        />
+        <MembersList members={members.data.documents} total={4} />
       </div>
     </div>
   );

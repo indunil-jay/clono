@@ -9,16 +9,6 @@ import { getMember } from "../members/utils";
 import { Workspace } from "./types";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 
-export const generateInviteCode = (length: number) => {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-};
-
 export const getCurrentWorkspace = async () => {
   //TODO: proper error handle
   try {
@@ -30,6 +20,8 @@ export const getCurrentWorkspace = async () => {
       MEMBERS_COLLECTION_ID,
       [Query.equal("userId", user.$id)]
     );
+
+    console.log("MEMBERS GET CURRENT WORKSPACE", { members });
 
     const workspaceIds = members.documents.map((member) => member.workspaceId);
 

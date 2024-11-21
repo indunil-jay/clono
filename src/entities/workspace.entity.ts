@@ -6,8 +6,9 @@ export const workspacesSchema = z.object({
   userId: z.string(),
   imageUrl: z.string().optional(),
   inviteCode: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
 });
 
-export type Workspace = Models.Document & z.infer<typeof workspacesSchema>;
+export type WorkspacesCollectionInput = z.infer<typeof workspacesSchema>;
+
+export type WorkspaceCollectionDocument = Models.Document &
+  z.infer<typeof workspacesSchema>;

@@ -1,6 +1,10 @@
-import { zValidator } from "@hono/zod-validator";
+import { createWorkspaceController } from "./../../../src/interface-adapter/controllers/workspaces/create-workspace.controller";
 import { Hono } from "hono";
-import { createWorkspaceSchemaForm, updateWorkspaceSchemaForm } from "./schema";
+import { z } from "zod";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import { zValidator } from "@hono/zod-validator";
+import { ID, Query } from "node-appwrite";
+
 import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
 import {
   TASKS_COLLECTION_ID,
@@ -9,16 +13,35 @@ import {
   WORKSPACE_COLLECTION_ID,
   MEMBERS_COLLECTION_ID,
 } from "@/src/lib/constants";
-import { ID, Query } from "node-appwrite";
-import { MemberRole } from "../members/types";
-import { generateInviteCode } from "./utils";
-import { getMember } from "../members/utils";
-import { z } from "zod";
-import { Workspace } from "./types";
-import { endOfMonth, startOfMonth, subMonths } from "date-fns";
-import { TaskStatus } from "../tasks/types";
+import { Workspace } from "@/app/_features/workspace/types";
+import {
+  createWorkspaceSchemaForm,
+  updateWorkspaceSchemaForm,
+} from "@/app/_features/workspace/schema";
+// import { generateInviteCode } from "@/app/_features/workspace/utils";
+import { MemberRole } from "@/app/_features/members/types";
+import { getMember } from "@/app/_features/members/utils";
+import { TaskStatus } from "@/app/_features/tasks/types";
+import { generateInviteCode } from "@/src/lib/generate-invite-code";
 
 const app = new Hono()
+  .post(
+    "/",
+    zValidator("form", createWorkspaceSchemaForm),
+    sessionMiddleware,
+    async (ctx) => {
+      const { name, image } = ctx.req.valid("form");
+      try {
+        const { workspaceId } = await createWorkspaceController({
+          name,
+          image,
+        });
+        return ctx.json({ status: true, data: { workspaceId } }, 200);
+      } catch (error) {
+        return ctx.json({ status: false, data: null }, 400);
+      }
+    }
+  )
   .get("/", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");
     const databases = ctx.get("databases");
@@ -66,67 +89,6 @@ const app = new Hono()
     });
   })
 
-  .post(
-    "/",
-    zValidator("form", createWorkspaceSchemaForm),
-    sessionMiddleware,
-    async (ctx) => {
-      const databases = ctx.get("databases");
-      const user = ctx.get("user");
-      const storage = ctx.get("storage");
-
-      const { name, image } = ctx.req.valid("form");
-
-      let uploadedImageUrl: string | undefined = undefined;
-
-      //TODO:error handle
-      //rollback  mechanism for database operation
-      if (image instanceof File) {
-        const file = await storage.createFile(
-          IMAGE_BUCKET_ID,
-          ID.unique(),
-          image
-        );
-
-        const arrayBuffer = await storage.getFilePreview(
-          IMAGE_BUCKET_ID,
-          file.$id
-        );
-
-        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
-          arrayBuffer
-        ).toString("base64")}`;
-      }
-
-      //create document
-      const workspace = await databases.createDocument(
-        DATABASE_ID,
-        WORKSPACE_COLLECTION_ID,
-        ID.unique(),
-
-        {
-          name,
-          userId: user.$id,
-          imageUrl: uploadedImageUrl,
-          inviteCode: generateInviteCode(10),
-        }
-      );
-
-      //add user to member db
-      await databases.createDocument(
-        DATABASE_ID,
-        MEMBERS_COLLECTION_ID,
-        ID.unique(),
-        {
-          userId: user.$id,
-          workspaceId: workspace.$id,
-          role: MemberRole.ADMIN,
-        }
-      );
-
-      return ctx.json({ data: workspace });
-    }
-  )
   .patch(
     "/:workspaceId",
     sessionMiddleware,

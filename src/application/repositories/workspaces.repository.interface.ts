@@ -1,7 +1,10 @@
-//defined all the method, invooke with worspace repositorites
-
-import { Context } from "hono";
+import {
+  WorkspaceCollectionDocument,
+  WorkspacesCollectionInput,
+} from "@/src/entities/workspace.entity";
 
 export interface IWorkspacesRepository {
-  getAll(ctx: Context): Promise<any>;
+  create: (
+    data: WorkspacesCollectionInput
+  ) => Promise<WorkspaceCollectionDocument>;
 }

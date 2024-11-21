@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export const MobileSidebar = () => {
-  // TODO:move to hook
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
   return (
     <Sheet modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>

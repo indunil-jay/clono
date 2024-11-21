@@ -1,8 +1,15 @@
 "use client";
 
 import { useMedia } from "react-use";
-import { DialogContent, Dialog } from "../ui/dialog";
-import { Drawer, DrawerContent } from "../ui/drawer";
+import {
+  DialogContent,
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/app/_components/ui/dialog";
+import { Drawer, DrawerContent } from "@/app/_components/ui/drawer";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ResponsiveModalProps {
   children: React.ReactNode;
@@ -21,6 +28,10 @@ export const ResponsiveModal = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="w-full sm:max-w-lg p-0 border-none overflow-y-auto max-h-[85vh] hide-scrollbar">
+          <VisuallyHidden>
+            <DialogTitle>hidden</DialogTitle>
+            <DialogDescription>hidden description</DialogDescription>
+          </VisuallyHidden>
           {children}
         </DialogContent>
       </Dialog>

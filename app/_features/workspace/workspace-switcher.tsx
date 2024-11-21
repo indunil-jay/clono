@@ -15,6 +15,7 @@ import { useCreateWorkspaceModal } from "./hooks/useCreateWorkSpaceModal";
 
 export const WorkspaceSwitcher = () => {
   const { data: workspaces } = useGetWorkspaces();
+
   const router = useRouter();
   const workspaceId = useWorkspaceId();
   const { open } = useCreateWorkspaceModal();

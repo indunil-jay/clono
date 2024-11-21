@@ -1,6 +1,7 @@
 "use client";
 import { InferRequestType, InferResponseType } from "hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { client } from "@/app/_lib/honojs/rpc";
 import { useToast } from "@/app/_hooks/use-toast";
 
@@ -17,17 +18,16 @@ export const useCreateWorkspace = () => {
       return await response.json();
     },
     onSuccess: async () => {
-      //toast.success("Workspace created");
       toast({
-        title: "Workspace created",
+        title: "Workspace created.",
       });
 
       await queryClient.invalidateQueries({ queryKey: ["workspaces"] });
     },
-    onError: () => {
-      // toast.error("Failed to create workspace");
+    onError: (error) => {
       toast({
-        title: "Failed to create workspace",
+        title: "Failed to create workspace.",
+        description: String(error.message),
       });
     },
   });

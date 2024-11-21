@@ -1,8 +1,11 @@
 import { Container } from "inversify";
 
 import { DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
+
 import { AuthenticationModule } from "./modules/authentication.module";
+import { StorageModule } from "./modules/storage.module";
 import { WorkspacesModule } from "./modules/workspaces.module";
+import { MembersModule } from "./modules/members.module";
 
 const ApplicationContainer = new Container({
   defaultScope: "Singleton",
@@ -10,12 +13,16 @@ const ApplicationContainer = new Container({
 
 export const initializeContainer = () => {
   ApplicationContainer.load(AuthenticationModule);
+  ApplicationContainer.load(StorageModule);
   ApplicationContainer.load(WorkspacesModule);
+  ApplicationContainer.load(MembersModule);
 };
 
 export const destroyContainer = () => {
   ApplicationContainer.unload(AuthenticationModule);
+  ApplicationContainer.unload(StorageModule);
   ApplicationContainer.unload(WorkspacesModule);
+  ApplicationContainer.unload(MembersModule);
 };
 
 if (process.env.NODE_ENV !== "test") {
