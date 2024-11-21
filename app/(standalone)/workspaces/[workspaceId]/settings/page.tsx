@@ -9,6 +9,7 @@ export default async function Page({
   params: Promise<{ workspaceId: string }>;
 }) {
   const user = await getCurrentUserSession();
+
   if (!user) redirect("/sign-in");
 
   const { workspaceId } = await params;

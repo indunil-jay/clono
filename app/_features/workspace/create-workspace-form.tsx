@@ -27,7 +27,7 @@ import {
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
 
-import { useCreateWorkspace } from "@/app/_features/workspace/hooks/useCreateWorkspace";
+import { useCreateWorkspace } from "@/app/_features/workspace/hooks/use-create-workspace";
 import { cn } from "@/app/_lib/utils";
 import { createWorkspaceFormSchema } from "@/src/interface-adapter/validation-schemas/workspace";
 import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";

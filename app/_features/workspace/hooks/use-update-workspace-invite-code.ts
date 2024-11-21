@@ -1,50 +1,47 @@
 "use client";
 import { InferRequestType, InferResponseType } from "hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { client } from "@/app/_lib/honojs/rpc";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"],
+  (typeof client.api.workspaces)[":workspaceId"]["reset-invite-code"]["$post"],
   200
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"]
+  (typeof client.api.workspaces)[":workspaceId"]["reset-invite-code"]["$post"]
 >;
 
-export const useUpdateWorkspace = () => {
+export const useUpdateInviteCodeWorkspace = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async ({ form, param }) => {
-      const response = await client.api.workspaces[":workspaceId"]["$patch"]({
-        form,
+    mutationFn: async ({ param }) => {
+      const response = await client.api.workspaces[":workspaceId"][
+        "reset-invite-code"
+      ]["$post"]({
         param,
       });
+
       if (!response.ok) {
-        throw new Error("Failed to update workspace.");
+        throw new Error("Failed to update workspace invite code");
       }
       return await response.json();
     },
     onSuccess: async ({ data }) => {
-      //toast.success("Workspace created");
       toast({
-        title: "Workspace updated",
+        title: "Workspace invite code updated.",
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["workspaces", "workspace", data.$id],
+        queryKey: ["workspaces", "workspace", data.inviteCode],
       });
-
-      router.refresh();
     },
     onError: () => {
-      // toast.error("Failed to create workspace");
       toast({
-        title: "Failed to create workspace",
+        title: "Failed to update workspace invite code",
       });
     },
   });

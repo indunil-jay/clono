@@ -1,3 +1,4 @@
+import { updateWorkspaceInviteCodeController } from "./../../../src/interface-adapter/controllers/workspaces/update-workspace-invite-code.controller";
 import { createWorkspaceController } from "./../../../src/interface-adapter/controllers/workspaces/create-workspace.controller";
 import { Hono } from "hono";
 import { z } from "zod";
@@ -23,6 +24,9 @@ import { MemberRole } from "@/app/_features/members/types";
 import { getMember } from "@/app/_features/members/utils";
 import { TaskStatus } from "@/app/_features/tasks/types";
 import { generateInviteCode } from "@/src/lib/generate-invite-code";
+import { getAllWorkspacesWithCurrentUserController } from "@/src/interface-adapter/controllers/workspaces/get-all-workspaces.controller";
+import { updateWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/update-workspace.controller";
+import { deleteWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/delete-workspace.controller";
 
 const app = new Hono()
   .post(
@@ -36,171 +40,89 @@ const app = new Hono()
           name,
           image,
         });
-        return ctx.json({ status: true, data: { workspaceId } }, 200);
+        return ctx.json({ status: "success", data: { workspaceId } }, 200);
       } catch (error) {
-        return ctx.json({ status: false, data: null }, 400);
+        return ctx.json({ status: "fail", data: null }, 400);
       }
     }
   )
   .get("/", sessionMiddleware, async (ctx) => {
-    const user = ctx.get("user");
-    const databases = ctx.get("databases");
-
-    //all members, that current user part of
-    const members = await databases.listDocuments(
-      DATABASE_ID,
-      MEMBERS_COLLECTION_ID,
-      [Query.equal("userId", user.$id)]
-    );
-
-    //return back if the login user not part of a worksace
-    if (members.total === 0) {
-      return ctx.json({ data: { documents: [], total: 0 } });
+    try {
+      const data = await getAllWorkspacesWithCurrentUserController();
+      return ctx.json({ status: "success", data }, 200);
+    } catch (error) {
+      return ctx.json({ status: "fail", data: null }, 400);
     }
-
-    const workspaceIds = members.documents.map((member) => member.workspaceId);
-
-    const workspaces = await databases.listDocuments(
-      DATABASE_ID,
-      WORKSPACE_COLLECTION_ID,
-      [Query.contains("$id", workspaceIds), Query.orderDesc("$createdAt")]
-    );
-
-    return ctx.json({ data: workspaces });
   })
+  // .get("/", sessionMiddleware, async (ctx) => {
+  //   const user = ctx.get("user");
+  //   const databases = ctx.get("databases");
 
-  .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
-    const user = ctx.get("user");
-    const databases = ctx.get("databases");
-    const { workspaceId } = ctx.req.param();
+  //   //all members, that current user part of
+  //   const members = await databases.listDocuments(
+  //     DATABASE_ID,
+  //     MEMBERS_COLLECTION_ID,
+  //     [Query.equal("userId", user.$id)]
+  //   );
 
-    const workspace = await databases.getDocument<Workspace>(
-      DATABASE_ID,
-      WORKSPACE_COLLECTION_ID,
-      workspaceId
-    );
+  //   //return back if the login user not part of a worksace
+  //   if (members.total === 0) {
+  //     return ctx.json({ data: { documents: [], total: 0 } });
+  //   }
 
-    return ctx.json({
-      data: {
-        $id: workspace.$id,
-        name: workspace.name,
-        imageUrl: workspace.imageUrl,
-      },
-    });
-  })
+  //   const workspaceIds = members.documents.map((member) => member.workspaceId);
+
+  //   const workspaces = await databases.listDocuments(
+  //     DATABASE_ID,
+  //     WORKSPACE_COLLECTION_ID,
+  //     [Query.contains("$id", workspaceIds), Query.orderDesc("$createdAt")]
+  //   );
+
+  //   return ctx.json({ data: workspaces });
+  // })
 
   .patch(
     "/:workspaceId",
     sessionMiddleware,
     zValidator("form", updateWorkspaceSchemaForm),
     async (ctx) => {
-      //
-      const databases = ctx.get("databases");
-      const user = ctx.get("user");
-      const storage = ctx.get("storage");
-
-      // get workspaceId from param
       const { workspaceId } = ctx.req.param();
-
-      //get validated form data
       const { name, image } = ctx.req.valid("form");
 
-      //check user allow to do action
-      const member = await getMember({
-        databases,
-        workspaceId,
-        userId: user.$id,
-      });
-
-      if (!member || member.role !== MemberRole.ADMIN) {
-        return ctx.json({ error: "Unauthorize" }, 401);
-      }
-
-      //submitting process
-      let uploadedImageUrl: string | undefined = undefined;
-
-      //TODO:error handle
-      //rollback  mechanism for database operation
-      if (image instanceof File) {
-        const file = await storage.createFile(
-          IMAGE_BUCKET_ID,
-          ID.unique(),
-          image
+      try {
+        const data = await updateWorkspaceController(
+          { name, image },
+          workspaceId
         );
-
-        const arrayBuffer = await storage.getFilePreview(
-          IMAGE_BUCKET_ID,
-          file.$id
+        return ctx.json(
+          { status: "success", data: { workspaceId: data.workspaceId } },
+          200
         );
-
-        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
-          arrayBuffer
-        ).toString("base64")}`;
-      } else {
-        uploadedImageUrl = image;
+      } catch (error) {
+        return ctx.json({ status: "fail" }, 400);
       }
-
-      const workspace = await databases.updateDocument(
-        DATABASE_ID,
-        WORKSPACE_COLLECTION_ID,
-        workspaceId,
-        { name, imageUrl: uploadedImageUrl }
-      );
-
-      return ctx.json({ data: workspace });
     }
   )
+
   .delete("/:workspaceId", sessionMiddleware, async (ctx) => {
-    const databases = ctx.get("databases");
-    const user = ctx.get("user");
-    const storage = ctx.get("storage");
     const { workspaceId } = ctx.req.param();
-    //check user allow to do action
-    const member = await getMember({
-      databases,
-      workspaceId,
-      userId: user.$id,
-    });
-
-    if (!member || member.role !== MemberRole.ADMIN) {
-      return ctx.json({ error: "Unauthorize" }, 401);
+    try {
+      await deleteWorkspaceController(workspaceId);
+      return ctx.json({ data: { workspaceId } });
+    } catch (error) {
+      return ctx.json({ status: "fail" }, 400);
     }
-
-    //TODO:, delete memeber, project datas , task ,image which save in bucket
-
-    await databases.deleteDocument(
-      DATABASE_ID,
-      WORKSPACE_COLLECTION_ID,
-      workspaceId
-    );
-    return ctx.json({ data: { $id: workspaceId } });
   })
   .post("/:workspaceId/reset-invite-code", sessionMiddleware, async (ctx) => {
-    const databases = ctx.get("databases");
-    const user = ctx.get("user");
-    const storage = ctx.get("storage");
     const { workspaceId } = ctx.req.param();
-    //check user allow to do action
-    const member = await getMember({
-      databases,
-      workspaceId,
-      userId: user.$id,
-    });
-
-    if (!member || member.role !== MemberRole.ADMIN) {
-      return ctx.json({ error: "Unauthorize" }, 401);
+    try {
+      const workspaceData = await updateWorkspaceInviteCodeController(
+        workspaceId
+      );
+      return ctx.json({ status: "success", data: workspaceData }, 200);
+    } catch (error) {
+      return ctx.json({ status: "fail" }, 400);
     }
-
-    const workspace = await databases.updateDocument(
-      DATABASE_ID,
-      WORKSPACE_COLLECTION_ID,
-      workspaceId,
-      {
-        inviteCode: generateInviteCode(10),
-      }
-    );
-
-    return ctx.json({ data: workspace });
   })
   .post(
     "/:workspaceId/join",
@@ -244,6 +166,26 @@ const app = new Hono()
       return ctx.json({ data: workspace });
     }
   )
+
+  .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
+    const user = ctx.get("user");
+    const databases = ctx.get("databases");
+    const { workspaceId } = ctx.req.param();
+
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId
+    );
+
+    return ctx.json({
+      data: {
+        $id: workspace.$id,
+        name: workspace.name,
+        imageUrl: workspace.imageUrl,
+      },
+    });
+  })
   .get("/:workspaceId/analytics", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");
     const databases = ctx.get("databases");

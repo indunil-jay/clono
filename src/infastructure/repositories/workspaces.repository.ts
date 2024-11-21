@@ -1,11 +1,13 @@
 import { injectable } from "inversify";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 
 import { IWorkspacesRepository } from "@/src/application/repositories/workspaces.repository.interface";
 import { DATABASE_ID, WORKSPACE_COLLECTION_ID } from "@/src/lib/constants";
 import {
+  DocumentList,
   WorkspaceCollectionDocument,
   WorkspacesCollectionInput,
+  WorkspacesCollectionUpdateInput,
 } from "@/src/entities/workspace.entity";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 
@@ -24,5 +26,45 @@ export class WorkspacesRepository implements IWorkspacesRepository {
       ID.unique(),
       workspaceObj
     );
+  }
+
+  public async update(
+    workspaceObj: WorkspacesCollectionUpdateInput,
+    workspaceId: string
+  ): Promise<WorkspaceCollectionDocument> {
+    const { databases } = await createSessionClient();
+
+    return await databases.updateDocument(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId,
+      {
+        name: workspaceObj.name,
+        imageUrl: workspaceObj.imageUrl,
+        inviteCode: workspaceObj.inviteCode,
+      }
+    );
+  }
+
+  public async getAllByUser(
+    userId: string
+  ): Promise<DocumentList<WorkspaceCollectionDocument>> {
+    const { databases } = await createSessionClient();
+
+    return await databases.listDocuments(DATABASE_ID, WORKSPACE_COLLECTION_ID, [
+      Query.equal("userId", userId),
+      Query.orderDesc("$createdAt"),
+    ]);
+  }
+
+  public async delete(workspaceId: string): Promise<void> {
+    const { databases } = await createSessionClient();
+    const res = await databases.deleteDocument(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId
+    );
+
+    console.log({ res });
   }
 }

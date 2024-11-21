@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 
 import { IMembersRepository } from "@/src/application/repositories/members.repository.interface";
 import {
@@ -22,5 +22,19 @@ export class MembersRepository implements IMembersRepository {
       ID.unique(),
       memberObj
     );
+  }
+
+  public async getWorkspaceMember(
+    memberId: string,
+    workspaceId: string
+  ): Promise<MemberCollectionDocument> {
+    const { databases } = await createSessionClient();
+
+    const members = await databases.listDocuments(
+      DATABASE_ID,
+      MEMBERS_COLLECTION_ID,
+      [Query.equal("workspaceId", workspaceId), Query.equal("userId", memberId)]
+    );
+    return members.documents[0] as MemberCollectionDocument;
   }
 }

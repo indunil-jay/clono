@@ -1,6 +1,13 @@
 "use client";
+
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, CopyIcon, ImageIcon } from "lucide-react";
+
 import {
   Form,
   FormControl,
@@ -8,43 +15,39 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../_components/ui/form";
-import { updateWorkspaceSchemaForm } from "./schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../_components/ui/input";
-import { Button } from "../../_components/ui/button";
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { useRef } from "react";
-import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
-import Image from "next/image";
-import { ArrowLeft, CopyIcon, ImageIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Workspace } from "./types";
-import { useUpdateWorkspace } from "./hooks/useUpdateWorkspace";
-import { useDeleteWorkspace } from "./hooks/useDeleteWorkspace";
+} from "@/app/_components/ui/card";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useUpdateInviteCodeWorkspace } from "./hooks/useUpdateInviteCodeWorkspace";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
+
+import { updateWorkspaceFormSchema } from "@/src/interface-adapter/validation-schemas/workspace";
+import { WorkspaceCollectionDocument } from "@/src/entities/workspace.entity";
+
+import { useUpdateInviteCodeWorkspace } from "@/app/_features/workspace/hooks/use-update-workspace-invite-code";
+import { useUpdateWorkspace } from "@/app/_features/workspace/hooks/use-update-workspace";
+import { useDeleteWorkspace } from "@/app/_features/workspace/hooks/use-delete-workspace";
 
 interface UpdateWorkspaceFormProps {
   onCancle?: () => void;
-  initialValues: Workspace;
+  initialValues: WorkspaceCollectionDocument;
 }
 
 export const UpdateWorkspaceForm = ({
   onCancle,
   initialValues,
 }: UpdateWorkspaceFormProps) => {
-  const { mutate, isPending } = useUpdateWorkspace();
-
-  const form = useForm<z.infer<typeof updateWorkspaceSchemaForm>>({
-    resolver: zodResolver(updateWorkspaceSchemaForm),
+  const form = useForm<z.infer<typeof updateWorkspaceFormSchema>>({
+    resolver: zodResolver(updateWorkspaceFormSchema),
     defaultValues: {
       ...initialValues,
       image: initialValues.imageUrl ?? "",
@@ -54,6 +57,9 @@ export const UpdateWorkspaceForm = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  //update workspace
+  const { mutate: updateWorkspace, isPending: isUpdatePending } =
+    useUpdateWorkspace();
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -62,23 +68,23 @@ export const UpdateWorkspaceForm = ({
     }
   };
 
-  const onSubmit = (values: z.infer<typeof updateWorkspaceSchemaForm>) => {
-    //TODO:error handle and redirection to workspace
+  const onSubmit = (values: z.infer<typeof updateWorkspaceFormSchema>) => {
     const formData = {
       ...values,
       image: values.image instanceof File ? values.image : "",
     };
-    mutate(
+    updateWorkspace(
       { form: formData, param: { workspaceId: initialValues.$id } },
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //onCancle?.(); router clear up url,
-          router.push(`/workspaces/${data.$id}`);
+          router.push(`/workspaces/${data?.workspaceId}`);
         },
       }
     );
   };
+
+  //delete workspace
 
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
     useDeleteWorkspace();
@@ -104,7 +110,8 @@ export const UpdateWorkspaceForm = ({
     );
   };
 
-  const { mutate: updateInviteLink, isPending: isUpdatingWorkspaceInviteID } =
+  //update workspace invite-code
+  const { mutate: updateInviteLink, isPending: isUpdatingWorkspaceInviteCode } =
     useUpdateInviteCodeWorkspace();
 
   const [ResetModal, confirmReset] = useConfirmModal({
@@ -129,6 +136,7 @@ export const UpdateWorkspaceForm = ({
   };
 
   const { toast } = useToast();
+
   const inviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
   const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(inviteLink).then(() =>
@@ -142,6 +150,7 @@ export const UpdateWorkspaceForm = ({
     <div className="flex flex-col gap-y-4">
       <DeleteModal />
       <ResetModal />
+
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
           <Button
@@ -171,7 +180,7 @@ export const UpdateWorkspaceForm = ({
                         <Input
                           placeholder="Enter workspace name"
                           {...field}
-                          disabled={isPending}
+                          disabled={isUpdatePending}
                         />
                       </FormControl>
 
@@ -215,13 +224,13 @@ export const UpdateWorkspaceForm = ({
                             type="file"
                             about=".png, .jpg, .jpeg, .svg"
                             ref={inputRef}
-                            disabled={isPending}
+                            disabled={isUpdatePending}
                             onChange={handleImageChange}
                           />
                           {field.value ? (
                             <Button
                               type="button"
-                              disabled={isPending}
+                              disabled={isUpdatePending}
                               variant={"destructive"}
                               size={"sm"}
                               className="w-fit mt-2"
@@ -237,7 +246,7 @@ export const UpdateWorkspaceForm = ({
                           ) : (
                             <Button
                               type="button"
-                              disabled={isPending}
+                              disabled={isUpdatePending}
                               variant={"secondary"}
                               size={"sm"}
                               className="w-fit mt-2"
@@ -255,8 +264,19 @@ export const UpdateWorkspaceForm = ({
               <DottedSeparator className="py-7" />
 
               <div className="flex items-center justify-between">
-                <Button type="submit" size={"lg"} disabled={isPending}>
-                  Save Changes
+                <Button
+                  type="submit"
+                  size={"lg"}
+                  disabled={!form.formState.isDirty || isUpdatePending}
+                >
+                  {isUpdatePending ? (
+                    <span className="flex gap-2">
+                      <span>Saving Changes</span>{" "}
+                      <SpinnerCircle></SpinnerCircle>
+                    </span>
+                  ) : (
+                    "Save Changes"
+                  )}
                 </Button>
               </div>
             </form>
@@ -291,10 +311,17 @@ export const UpdateWorkspaceForm = ({
               size={"sm"}
               variant={"default"}
               type="button"
-              disabled={isUpdatingWorkspaceInviteID}
+              disabled={isUpdatingWorkspaceInviteCode}
               onClick={handleReset}
             >
-              Reset Invite Link
+              {isUpdatingWorkspaceInviteCode ? (
+                <span className="flex gap-2">
+                  <span>Reseting Invite Link</span>{" "}
+                  <SpinnerCircle></SpinnerCircle>
+                </span>
+              ) : (
+                <span> Reset Invite Link</span>
+              )}
             </Button>
           </div>
         </CardContent>

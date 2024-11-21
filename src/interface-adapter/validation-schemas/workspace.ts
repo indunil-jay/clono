@@ -18,3 +18,17 @@ export const createWorkspaceFormSchema = z.object({
 export type CreateWorkspaceFormInput = z.infer<
   typeof createWorkspaceFormSchema
 >;
+
+export const updateWorkspaceFormSchema = z.object({
+  name: z.string().trim().min(3, "Must be 3 or more characters").optional(),
+  image: z
+    .union([
+      z.instanceof(File),
+      z.string().transform((value) => (value === "" ? undefined : value)),
+    ])
+    .optional(),
+});
+
+export type UpdateWorkspaceFormInput = z.infer<
+  typeof updateWorkspaceFormSchema
+>;

@@ -6,19 +6,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../_components/ui/select";
-import { useGetWorkspaces } from "./hooks/useGetWorkspace";
+import { useGetWorkspaces } from "./hooks/use-get-workspace";
 import { RiAddCircleFill } from "react-icons/ri";
 import { WorkspaceAvatar } from "./workspace-avatar";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "./hooks/useWorkspaceId";
-import { useCreateWorkspaceModal } from "./hooks/useCreateWorkSpaceModal";
+import { useCreateWorkspaceModal } from "./hooks/use-create-workspace-modal";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 export const WorkspaceSwitcher = () => {
-  const { data: workspaces } = useGetWorkspaces();
+  const { data: workspacesData, status } = useGetWorkspaces();
 
   const router = useRouter();
   const workspaceId = useWorkspaceId();
   const { open } = useCreateWorkspaceModal();
+
+  if (status === "error") {
+    return "error loading workspaces";
+  }
 
   const onSelect = (id: string) => {
     router.push(`/workspaces/${id}`);
@@ -38,9 +43,10 @@ export const WorkspaceSwitcher = () => {
       <Select onValueChange={onSelect} value={workspaceId}>
         <SelectTrigger className=" w-full bg-neutral-200 font-medium p-1 focus:ring-transparent">
           <SelectValue placeholder="No workspace selected" />
+          {status === "pending" && <SpinnerCircle />}
         </SelectTrigger>
         <SelectContent>
-          {workspaces?.data?.documents.map((workspace) => (
+          {workspacesData?.data.workspaces.map((workspace) => (
             <SelectItem key={workspace.$id} value={workspace.$id}>
               <div className="flex items-center justify-start gap-3 font-medium">
                 <WorkspaceAvatar

@@ -5,4 +5,8 @@ import {
 
 export interface IMembersRepository {
   create: (data: MemberCollectionInput) => Promise<MemberCollectionDocument>;
+  getWorkspaceMember: (
+    memberId: string,
+    workspaceId: string
+  ) => Promise<MemberCollectionDocument>;
 }
