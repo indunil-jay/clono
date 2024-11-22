@@ -11,7 +11,5 @@ export default async function Page({
 
   const user = await getCurrentUserSession();
   if (!user) redirect("/sign-in");
-
-  // return <WorkspaceIdClient workspaceId={workspaceId} />;
   return <Workspace workspaceId={workspaceId} />;
 }

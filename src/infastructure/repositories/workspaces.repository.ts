@@ -15,6 +15,18 @@ import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 export class WorkspacesRepository implements IWorkspacesRepository {
   constructor() {}
 
+  public async getworkspaceById(
+    workspaceId: string
+  ): Promise<WorkspaceCollectionDocument> {
+    const { databases } = await createSessionClient();
+
+    return await databases.getDocument(
+      DATABASE_ID,
+      WORKSPACE_COLLECTION_ID,
+      workspaceId
+    );
+  }
+
   public async create(
     workspaceObj: WorkspacesCollectionInput
   ): Promise<WorkspaceCollectionDocument> {
@@ -57,14 +69,23 @@ export class WorkspacesRepository implements IWorkspacesRepository {
     ]);
   }
 
+  public async getWorkspacesByIds(
+    worspacesIds: string[]
+  ): Promise<DocumentList<WorkspaceCollectionDocument>> {
+    const { databases } = await createSessionClient();
+
+    return await databases.listDocuments(DATABASE_ID, WORKSPACE_COLLECTION_ID, [
+      Query.contains("$id", worspacesIds),
+      Query.orderDesc("$createdAt"),
+    ]);
+  }
+
   public async delete(workspaceId: string): Promise<void> {
     const { databases } = await createSessionClient();
-    const res = await databases.deleteDocument(
+    await databases.deleteDocument(
       DATABASE_ID,
       WORKSPACE_COLLECTION_ID,
       workspaceId
     );
-
-    console.log({ res });
   }
 }

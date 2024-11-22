@@ -4,12 +4,12 @@ import {
   WorkspacesCollectionInput,
   WorkspacesCollectionUpdateInput,
 } from "@/src/entities/workspace.entity";
-import { UpdateWorkspaceFormInput } from "@/src/interface-adapter/validation-schemas/workspace";
 
 export interface IWorkspacesRepository {
   create: (
     data: WorkspacesCollectionInput
   ) => Promise<WorkspaceCollectionDocument>;
+
   getAllByUser: (
     userId: string
   ) => Promise<DocumentList<WorkspaceCollectionDocument>>;
@@ -20,4 +20,12 @@ export interface IWorkspacesRepository {
   ) => Promise<WorkspaceCollectionDocument>;
 
   delete: (workspaceId: string) => Promise<void>;
+
+  getWorkspacesByIds: (
+    worspacesIds: string[]
+  ) => Promise<DocumentList<WorkspaceCollectionDocument>>;
+
+  getworkspaceById: (
+    workspaceId: string
+  ) => Promise<WorkspaceCollectionDocument>;
 }

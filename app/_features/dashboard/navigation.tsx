@@ -8,8 +8,7 @@ import {
   GoHome,
   GoHomeFill,
 } from "react-icons/go";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 const routes = [
   {
@@ -43,7 +42,7 @@ const routes = [
 ];
 
 export const Navigation = () => {
-  const workspaceId = useWorkspaceId();
+  const { workspaceId } = useParams();
   const pathname = usePathname();
 
   return (

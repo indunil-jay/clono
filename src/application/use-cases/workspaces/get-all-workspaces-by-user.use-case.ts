@@ -6,8 +6,18 @@ export const getAllWorkspacesWithCurrentUserUseCase = async () => {
   const { account } = await createSessionClient();
   const user = await account.get();
 
+  //get all memebers documents which current user part of
+  const memberRepository = getInjection("IMembersRepository");
+  const membersDocumentList = await memberRepository.getAllByUser(user.$id);
+
+  //extarct workspaces Ids
+  const workspaceId = membersDocumentList.documents.map(
+    (document) => document.workspaceId
+  );
+
+  //get all workspace  current user partof
   const workspacesRepository = getInjection("IWorkspacesRepository");
-  const workspaces = await workspacesRepository.getAllByUser(user.$id);
+  const workspaces = await workspacesRepository.getWorkspacesByIds(workspaceId);
 
   return workspaces;
 };

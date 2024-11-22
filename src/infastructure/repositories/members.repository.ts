@@ -8,6 +8,7 @@ import {
 } from "@/src/entities/member.entity";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
+import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()
 export class MembersRepository implements IMembersRepository {
@@ -36,5 +37,14 @@ export class MembersRepository implements IMembersRepository {
       [Query.equal("workspaceId", workspaceId), Query.equal("userId", memberId)]
     );
     return members.documents[0] as MemberCollectionDocument;
+  }
+
+  public async getAllByUser(
+    userId: string
+  ): Promise<DocumentList<MemberCollectionDocument>> {
+    const { databases } = await createSessionClient();
+    return await databases.listDocuments(DATABASE_ID, MEMBERS_COLLECTION_ID, [
+      Query.equal("userId", userId),
+    ]);
   }
 }

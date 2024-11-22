@@ -1,5 +1,8 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -9,11 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/_components/ui/card";
-import Link from "next/link";
-import { useJoinMemberWorkspace } from "./hooks/useJoinMemberWorkspace";
-import { useWorkspaceInviteCode } from "./hooks/useWorkspaceInviteCode";
-import { useWorkspaceId } from "./hooks/useWorkspaceId";
-import { useRouter } from "next/navigation";
+
+import { useJoinMemberWorkspace } from "@/app/_features/workspace/hooks/use-join-member-workspace";
 
 interface JoinWorkSpaceFormProps {
   initialValues: {
@@ -25,13 +25,17 @@ export const JoinWorkSpaceForm = ({
   initialValues,
 }: JoinWorkSpaceFormProps) => {
   const { mutate, isPending: isSumbit } = useJoinMemberWorkspace();
-  const inviteCode = useWorkspaceInviteCode();
-  const workspaceId = useWorkspaceId();
+  const params = useParams();
   const router = useRouter();
 
   const OnSubmit = () => {
     mutate(
-      { param: { workspaceId }, json: { code: inviteCode } },
+      {
+        param: {
+          workspaceId: params.workspaceId as string,
+          inviteCode: params.inviteCode as string,
+        },
+      },
       {
         onSuccess: ({ data }) => {
           router.push(`/workspaces/${data.$id}`);

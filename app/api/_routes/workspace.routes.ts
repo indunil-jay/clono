@@ -1,32 +1,29 @@
-import { updateWorkspaceInviteCodeController } from "./../../../src/interface-adapter/controllers/workspaces/update-workspace-invite-code.controller";
-import { createWorkspaceController } from "./../../../src/interface-adapter/controllers/workspaces/create-workspace.controller";
 import { Hono } from "hono";
-import { z } from "zod";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { zValidator } from "@hono/zod-validator";
-import { ID, Query } from "node-appwrite";
+import { Query } from "node-appwrite";
 
 import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
 import {
   TASKS_COLLECTION_ID,
   DATABASE_ID,
-  IMAGE_BUCKET_ID,
   WORKSPACE_COLLECTION_ID,
-  MEMBERS_COLLECTION_ID,
 } from "@/src/lib/constants";
 import { Workspace } from "@/app/_features/workspace/types";
 import {
   createWorkspaceSchemaForm,
   updateWorkspaceSchemaForm,
 } from "@/app/_features/workspace/schema";
-// import { generateInviteCode } from "@/app/_features/workspace/utils";
-import { MemberRole } from "@/app/_features/members/types";
 import { getMember } from "@/app/_features/members/utils";
 import { TaskStatus } from "@/app/_features/tasks/types";
-import { generateInviteCode } from "@/src/lib/generate-invite-code";
+
 import { getAllWorkspacesWithCurrentUserController } from "@/src/interface-adapter/controllers/workspaces/get-all-workspaces.controller";
 import { updateWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/update-workspace.controller";
 import { deleteWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/delete-workspace.controller";
+import { joinMemberToWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/join-member-to-workspace.controller";
+import { getAllWorkspacesAnallticsController } from "@/src/interface-adapter/controllers/workspaces/get-all-workspaces-analytics.controller";
+import { updateWorkspaceInviteCodeController } from "@/src/interface-adapter/controllers/workspaces/update-workspace-invite-code.controller";
+import { createWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/create-workspace.controller";
 
 const app = new Hono()
   .post(
@@ -54,33 +51,6 @@ const app = new Hono()
       return ctx.json({ status: "fail", data: null }, 400);
     }
   })
-  // .get("/", sessionMiddleware, async (ctx) => {
-  //   const user = ctx.get("user");
-  //   const databases = ctx.get("databases");
-
-  //   //all members, that current user part of
-  //   const members = await databases.listDocuments(
-  //     DATABASE_ID,
-  //     MEMBERS_COLLECTION_ID,
-  //     [Query.equal("userId", user.$id)]
-  //   );
-
-  //   //return back if the login user not part of a worksace
-  //   if (members.total === 0) {
-  //     return ctx.json({ data: { documents: [], total: 0 } });
-  //   }
-
-  //   const workspaceIds = members.documents.map((member) => member.workspaceId);
-
-  //   const workspaces = await databases.listDocuments(
-  //     DATABASE_ID,
-  //     WORKSPACE_COLLECTION_ID,
-  //     [Query.contains("$id", workspaceIds), Query.orderDesc("$createdAt")]
-  //   );
-
-  //   return ctx.json({ data: workspaces });
-  // })
-
   .patch(
     "/:workspaceId",
     sessionMiddleware,
@@ -103,7 +73,6 @@ const app = new Hono()
       }
     }
   )
-
   .delete("/:workspaceId", sessionMiddleware, async (ctx) => {
     const { workspaceId } = ctx.req.param();
     try {
@@ -124,48 +93,19 @@ const app = new Hono()
       return ctx.json({ status: "fail" }, 400);
     }
   })
-  .post(
-    "/:workspaceId/join",
-    sessionMiddleware,
-    zValidator("json", z.object({ code: z.string() })),
-    async (ctx) => {
-      const { workspaceId } = ctx.req.param();
-      const { code } = ctx.req.valid("json");
+  .post("/:workspaceId/join/:inviteCode", sessionMiddleware, async (ctx) => {
+    const { workspaceId, inviteCode } = ctx.req.param();
 
-      const databases = ctx.get("databases");
-      const user = ctx.get("user");
-
-      //check user allow to do action
-      const member = await getMember({
-        databases,
+    try {
+      const workspaceData = await joinMemberToWorkspaceController(
         workspaceId,
-        userId: user.$id,
-      });
-
-      if (member) {
-        return ctx.json({ error: "Already a member" }, 500);
-      }
-
-      const workspace = await databases.getDocument<Workspace>(
-        DATABASE_ID,
-        WORKSPACE_COLLECTION_ID,
-        workspaceId
+        inviteCode
       );
-
-      if (workspace.inviteCode !== code) {
-        return ctx.json({ error: "Invalid invite coode" }, 400);
-      }
-
-      await databases.createDocument(
-        DATABASE_ID,
-        MEMBERS_COLLECTION_ID,
-        ID.unique(),
-        { workspaceId, userId: user.$id, role: MemberRole.MEMBER }
-      );
-
-      return ctx.json({ data: workspace });
+      return ctx.json({ status: "success", data: workspaceData });
+    } catch (error) {
+      return ctx.json({ status: "fail", data: null });
     }
-  )
+  })
 
   .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");
@@ -186,6 +126,15 @@ const app = new Hono()
       },
     });
   })
+  .get("/analytics", sessionMiddleware, async (ctx) => {
+    try {
+      const data = await getAllWorkspacesAnallticsController();
+      return ctx.json({ status: "success", data }, 200);
+    } catch (error) {
+      return ctx.json({ status: "fail" }, 400);
+    }
+  })
+
   .get("/:workspaceId/analytics", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");
     const databases = ctx.get("databases");

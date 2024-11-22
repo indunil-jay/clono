@@ -1,4 +1,5 @@
 import { IMembersRepository } from "@/src/application/repositories/members.repository.interface";
+import { ITasksRepository } from "@/src/application/repositories/tasks.repository.interface";
 import { IWorkspacesRepository } from "@/src/application/repositories/workspaces.repository.interface";
 import { IAuthenticationService } from "@/src/application/services/authentication-service.interface";
 import { IStorageService } from "@/src/application/services/storage-service.interface";
@@ -11,6 +12,7 @@ export const DI_SYMBOLS = {
   // Repositories
   IWorkspacesRepository: Symbol.for("IWorkspacesRepository"),
   IMembersRepository: Symbol.for("IMembersRepository"),
+  ITasksRepository: Symbol.for("ITasksRepository"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -21,4 +23,5 @@ export interface DI_RETURN_TYPES {
   // Repositories
   IWorkspacesRepository: IWorkspacesRepository;
   IMembersRepository: IMembersRepository;
+  ITasksRepository: ITasksRepository;
 }

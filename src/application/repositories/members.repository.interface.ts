@@ -2,6 +2,7 @@ import {
   MemberCollectionDocument,
   MemberCollectionInput,
 } from "@/src/entities/member.entity";
+import { DocumentList } from "@/src/entities/workspace.entity";
 
 export interface IMembersRepository {
   create: (data: MemberCollectionInput) => Promise<MemberCollectionDocument>;
@@ -9,4 +10,8 @@ export interface IMembersRepository {
     memberId: string,
     workspaceId: string
   ) => Promise<MemberCollectionDocument>;
+
+  getAllByUser: (
+    userId: string
+  ) => Promise<DocumentList<MemberCollectionDocument>>;
 }

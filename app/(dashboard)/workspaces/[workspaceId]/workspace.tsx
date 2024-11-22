@@ -1,3 +1,5 @@
+import { WorkspaceIdClient } from "./client";
+
 export const Workspace = ({ workspaceId }: { workspaceId: string }) => {
-  return <>workspace {workspaceId}</>;
+  return <WorkspaceIdClient workspaceId={workspaceId} />;
 };

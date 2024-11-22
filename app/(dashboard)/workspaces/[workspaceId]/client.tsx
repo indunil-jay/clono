@@ -15,13 +15,14 @@ import { Task } from "@/app/_features/tasks/types";
 import { Button } from "@/app/_components/ui/button";
 import { CalendarIcon, PlusIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
-import { useWorkspaceId } from "@/app/_features/workspace/hooks/useWorkspaceId";
+// import { useWorkspaceId } from "@/app/_features/workspace/hooks/useWorkspaceId";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Project } from "@/app/_features/projects/types";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { Member } from "@/app/_features/members/types";
 import { MemberAvatar } from "@/app/_features/members/components/member-avatar";
+import { useParams } from "next/navigation";
 
 export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
   const { data: analytics, isLoading: isLoadingAnalytics } =
@@ -46,7 +47,7 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
     isLoadingProjects ||
     isLoadingMembers;
 
-  if (!isLoading) return <PageLoader />;
+  if (isLoading) return <PageLoader />;
 
   if (!analytics || !tasks || !projects || !members) {
     return <PageError message="failed to load workspace data" />;
@@ -131,7 +132,7 @@ interface TaskListprops {
 
 export const TaskList = ({ tasks, total }: TaskListprops) => {
   const { open: createTask } = useCreateTaskModal();
-  const workspaceId = useWorkspaceId();
+  const { workspaceId } = useParams();
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
@@ -185,7 +186,7 @@ interface ProjectListprops {
 }
 export const ProjectList = ({ projects, total }: ProjectListprops) => {
   const { open: createProject } = useCreateProjectModal();
-  const workspaceId = useWorkspaceId();
+  const { workspaceId } = useParams();
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
@@ -231,7 +232,7 @@ interface MembersListProps {
   total: number;
 }
 export const MembersList = ({ members, total }: MembersListProps) => {
-  const workspaceId = useWorkspaceId();
+  const { workspaceId } = useParams();
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">

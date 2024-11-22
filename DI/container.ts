@@ -6,6 +6,7 @@ import { AuthenticationModule } from "./modules/authentication.module";
 import { StorageModule } from "./modules/storage.module";
 import { WorkspacesModule } from "./modules/workspaces.module";
 import { MembersModule } from "./modules/members.module";
+import { TasksModule } from "./modules/tasks.module";
 
 const ApplicationContainer = new Container({
   defaultScope: "Singleton",
@@ -16,6 +17,7 @@ export const initializeContainer = () => {
   ApplicationContainer.load(StorageModule);
   ApplicationContainer.load(WorkspacesModule);
   ApplicationContainer.load(MembersModule);
+  ApplicationContainer.load(TasksModule);
 };
 
 export const destroyContainer = () => {
@@ -23,6 +25,7 @@ export const destroyContainer = () => {
   ApplicationContainer.unload(StorageModule);
   ApplicationContainer.unload(WorkspacesModule);
   ApplicationContainer.unload(MembersModule);
+  ApplicationContainer.unload(TasksModule);
 };
 
 if (process.env.NODE_ENV !== "test") {
