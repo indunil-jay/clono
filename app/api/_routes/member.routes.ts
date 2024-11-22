@@ -3,54 +3,25 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
 import { createAdminClient } from "@/src/lib/appwrite/appwrite";
-import { getMember } from "./utils";
 import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
 import { Query } from "node-appwrite";
-import { Member, MemberRole } from "./types";
+import { Member } from "@/app/_features/members/types";
+import { getMember } from "@/app/_features/members/utils";
+import { MemberRole } from "@/src/entities/member.enum";
+import { getAllMembersController } from "@/src/interface-adapter/controllers/members/get-all-members-in-workspace.controller";
 
 const app = new Hono()
-  .get(
-    "/",
-    sessionMiddleware,
-    zValidator("query", z.object({ workspaceId: z.string() })),
-    async (ctx) => {
-      const { users } = await createAdminClient();
-      const databases = ctx.get("databases");
-      const user = ctx.get("user");
+  .get("/:workspaceId", sessionMiddleware, async (ctx) => {
+    const { workspaceId } = ctx.req.param();
 
-      const { workspaceId } = ctx.req.valid("query");
-
-      const memeber = await getMember({
-        databases,
-        workspaceId,
-        userId: user.$id,
-      });
-
-      if (!memeber) {
-        return ctx.json({ error: "Unauthorized" }, 401);
-      }
-
-      const memebers = await databases.listDocuments<Member>(
-        DATABASE_ID,
-        MEMBERS_COLLECTION_ID,
-        [Query.equal("workspaceId", workspaceId)]
-      );
-      const populatedMembers = await Promise.all(
-        memebers.documents.map(async (member) => {
-          const user = await users.get(member.userId);
-
-          return { ...member, name: user.name, email: user.email };
-        })
-      );
-
-      return ctx.json({
-        data: {
-          ...memeber,
-          documents: populatedMembers,
-        },
-      });
+    try {
+      const members = await getAllMembersController(workspaceId);
+      return ctx.json({ status: "success", data: members }, 200);
+    } catch (error) {
+      return ctx.json({ status: "fail" }, 400);
     }
-  )
+  })
+
   .delete("/:memberId", sessionMiddleware, async (ctx) => {
     const { memberId } = ctx.req.param();
     const user = ctx.get("user");

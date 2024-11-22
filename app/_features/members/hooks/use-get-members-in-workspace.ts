@@ -1,17 +1,16 @@
-import { webpack } from "webpack";
 import { client } from "@/app/_lib/honojs/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-interface UseGetMembersProps {
+export const useGetMembersInWorkspace = ({
+  workspaceId,
+}: {
   workspaceId: string;
-}
-
-export const useGetMembers = ({ workspaceId }: UseGetMembersProps) => {
+}) => {
   const query = useQuery({
     queryKey: ["members", workspaceId],
     queryFn: async () => {
-      const response = await client.api.members.$get({
-        query: { workspaceId },
+      const response = await client.api.members[":workspaceId"].$get({
+        param: { workspaceId },
       });
 
       if (!response.ok) throw new Error("Failed to fetch workspaces.");

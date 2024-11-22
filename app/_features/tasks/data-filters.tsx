@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectSeparator,
 } from "@/app/_components/ui/select";
-import { useGetMembers } from "../members/hooks/useGetMember";
+import { useGetMembers } from "../members/hooks/use-get-members-in-workspace";
 import { useGetProjects } from "../projects/hooks/useGetProjetct";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Folder, ListCheckIcon, User } from "lucide-react";

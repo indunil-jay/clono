@@ -14,4 +14,8 @@ export interface IMembersRepository {
   getAllByUser: (
     userId: string
   ) => Promise<DocumentList<MemberCollectionDocument>>;
+
+  getAllMembersInWorkspace: (
+    workspaceId: string
+  ) => Promise<DocumentList<MemberCollectionDocument>>;
 }

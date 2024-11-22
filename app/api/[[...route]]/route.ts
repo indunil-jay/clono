@@ -2,10 +2,10 @@ import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import auth from "@/app/api/_routes/auth.routes";
 import workspaces from "@/app/api/_routes/workspace.routes";
+import members from "@/app/api/_routes/member.routes";
+import tasks from "@/app/api/_routes/task.routes";
 
-import members from "@/app/_features/members/route";
 import projects from "@/app/_features/projects/route";
-import tasks from "@/app/_features/tasks/route";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -16,10 +16,9 @@ const app = new Hono().basePath("/api");
 const routes = app
   .route("/auth", auth)
   .route("/workspaces", workspaces)
-
+  .route("/tasks", tasks)
   .route("/members", members)
-  .route("/projects", projects)
-  .route("/tasks", tasks);
+  .route("/projects", projects);
 
 export const GET = handle(app);
 export const POST = handle(app);

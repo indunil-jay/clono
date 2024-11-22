@@ -108,7 +108,6 @@ const app = new Hono()
   })
 
   .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
-    const user = ctx.get("user");
     const databases = ctx.get("databases");
     const { workspaceId } = ctx.req.param();
 
@@ -120,9 +119,10 @@ const app = new Hono()
 
     return ctx.json({
       data: {
-        $id: workspace.$id,
+        workspaceId: workspace.$id,
         name: workspace.name,
         imageUrl: workspace.imageUrl,
+        userId: workspace.userId,
       },
     });
   })

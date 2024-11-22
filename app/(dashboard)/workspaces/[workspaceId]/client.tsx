@@ -1,7 +1,6 @@
 "use client";
 
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
-import { useGetMembers } from "@/app/_features/members/hooks/useGetMember";
 import { useCreateProjectModal } from "@/app/_features/projects/hooks/useCreateProjectModal";
 import { useGetProjects } from "@/app/_features/projects/hooks/useGetProjetct";
 import { useCreateTaskModal } from "@/app/_features/tasks/hooks/useCreateTaskModal";
@@ -15,7 +14,6 @@ import { Task } from "@/app/_features/tasks/types";
 import { Button } from "@/app/_components/ui/button";
 import { CalendarIcon, PlusIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
-// import { useWorkspaceId } from "@/app/_features/workspace/hooks/useWorkspaceId";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Project } from "@/app/_features/projects/types";
@@ -23,6 +21,7 @@ import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { Member } from "@/app/_features/members/types";
 import { MemberAvatar } from "@/app/_features/members/components/member-avatar";
 import { useParams } from "next/navigation";
+import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
 
 export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
   const { data: analytics, isLoading: isLoadingAnalytics } =
@@ -37,9 +36,10 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
     workspaceId,
   });
 
-  const { data: members, isLoading: isLoadingMembers } = useGetMembers({
-    workspaceId,
-  });
+  const { data: members, isLoading: isLoadingMembers } =
+    useGetMembersInWorkspace({
+      workspaceId,
+    });
 
   const isLoading =
     isLoadingAnalytics ||
@@ -119,7 +119,7 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
           projects={projects.data.documents}
           total={projects.data.total}
         />
-        <MembersList members={members.data.documents} total={4} />
+        {/* <MembersList members={members.data} total={4} /> */}
       </div>
     </div>
   );
