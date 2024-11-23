@@ -1,12 +1,13 @@
 import { Container } from "inversify";
 
-import { DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
+import { DI_RETURN_TYPES, DI_SYMBOLS } from "@/DI/types";
 
-import { AuthenticationModule } from "./modules/authentication.module";
-import { StorageModule } from "./modules/storage.module";
-import { WorkspacesModule } from "./modules/workspaces.module";
-import { MembersModule } from "./modules/members.module";
-import { TasksModule } from "./modules/tasks.module";
+import { AuthenticationModule } from "@/DI/modules/authentication.module";
+import { StorageModule } from "@/DI/modules/storage.module";
+import { WorkspacesModule } from "@/DI/modules/workspaces.module";
+import { MembersModule } from "@/DI/modules/members.module";
+import { TasksModule } from "@/DI/modules/tasks.module";
+import { ProjectsModule } from "@/DI/modules/projects.module";
 
 const ApplicationContainer = new Container({
   defaultScope: "Singleton",
@@ -18,6 +19,7 @@ export const initializeContainer = () => {
   ApplicationContainer.load(WorkspacesModule);
   ApplicationContainer.load(MembersModule);
   ApplicationContainer.load(TasksModule);
+  ApplicationContainer.load(ProjectsModule);
 };
 
 export const destroyContainer = () => {
@@ -26,6 +28,7 @@ export const destroyContainer = () => {
   ApplicationContainer.unload(WorkspacesModule);
   ApplicationContainer.unload(MembersModule);
   ApplicationContainer.unload(TasksModule);
+  ApplicationContainer.unload(ProjectsModule);
 };
 
 if (process.env.NODE_ENV !== "test") {

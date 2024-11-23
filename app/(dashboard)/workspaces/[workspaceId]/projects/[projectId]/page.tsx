@@ -11,7 +11,7 @@ import { ProjectAnalitics } from "./client";
 export default async function Page({
   params,
 }: {
-  params: { projectId: string };
+  params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
   const user = await getCurrentUserSession();

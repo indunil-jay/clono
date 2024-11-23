@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/app/_components/ui/card";
-import { useGetMembers } from "../members/hooks/use-get-members-in-workspace";
-import { useGetProjects } from "../projects/hooks/useGetProjetct";
+import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
+import { useGetProjects } from "../projects/hooks/use-get-projetcts-by-workspace-id";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Loader } from "lucide-react";
 import { CreateTaskForm } from "./create-task-form";
@@ -16,16 +16,17 @@ export const CreateTaskFormWrapper = ({
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({
     workspaceId,
   });
-  const { data: members, isLoading: isLoadingMembers } = useGetMembers({
-    workspaceId,
-  });
+  const { data: members, isLoading: isLoadingMembers } =
+    useGetMembersInWorkspace({
+      workspaceId,
+    });
 
   const projectsOptions = projects?.data.documents.map((project) => ({
     id: project.$id,
     name: project.name,
     imageUrl: project.imageUrl,
   }));
-  const membersOptions = members?.data.documents.map((project) => ({
+  const membersOptions = members?.data.map((project) => ({
     id: project.$id,
     name: project.name,
   }));

@@ -6,8 +6,8 @@ import {
   SelectItem,
   SelectSeparator,
 } from "@/app/_components/ui/select";
-import { useGetMembers } from "../members/hooks/use-get-members-in-workspace";
-import { useGetProjects } from "../projects/hooks/useGetProjetct";
+import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
+import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Folder, ListCheckIcon, User } from "lucide-react";
 import { TaskStatus } from "./types";
@@ -20,22 +20,26 @@ interface DataFiltersProps {
 
 export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
   const workspaceId = useWorkspaceId();
-  const { data: projects, isLoading: isLoadingProjects } = useGetProjects({
-    workspaceId,
-  });
+  const { data: projects, isLoading: isLoadingProjects } =
+    useGetProjectsByWorkspaceId({
+      workspaceId,
+    });
 
-  const { data: members, isLoading: isLoadingMembers } = useGetMembers({
-    workspaceId,
-  });
+  const { data: members, isLoading: isLoadingMembers } =
+    useGetMembersInWorkspace({
+      workspaceId,
+    });
 
   const isLoading = isLoadingMembers || isLoadingProjects;
 
-  const projectOptions = projects?.data.documents.map((project) => ({
-    value: project.$id,
-    label: project.name,
-  }));
+  const projectOptions = projects?.data?.workspaceAllProjects.map(
+    (project) => ({
+      value: project.$id,
+      label: project.name,
+    })
+  );
 
-  const memberOptions = members?.data.documents.map((member) => ({
+  const memberOptions = members?.data.map((member) => ({
     value: member.$id,
     label: member.name,
   }));

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/app/_components/ui/card";
-import { useGetMembers } from "../members/hooks/use-get-members-in-workspace";
-import { useGetProjects } from "../projects/hooks/useGetProjetct";
+import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
+import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Loader } from "lucide-react";
 import { useGetTasksById } from "./hooks/useGetTaskById";
@@ -18,19 +18,23 @@ export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
     taskId: id,
   });
 
-  const { data: projects, isLoading: isLoadingProjects } = useGetProjects({
-    workspaceId,
-  });
-  const { data: members, isLoading: isLoadingMembers } = useGetMembers({
-    workspaceId,
-  });
+  const { data: projects, isLoading: isLoadingProjects } =
+    useGetProjectsByWorkspaceId({
+      workspaceId,
+    });
+  const { data: members, isLoading: isLoadingMembers } =
+    useGetMembersInWorkspace({
+      workspaceId,
+    });
 
-  const projectsOptions = projects?.data.documents.map((project) => ({
-    id: project.$id,
-    name: project.name,
-    imageUrl: project.imageUrl,
-  }));
-  const membersOptions = members?.data.documents.map((project) => ({
+  const projectsOptions = projects?.data?.workspaceAllProjects.map(
+    (project) => ({
+      id: project.$id,
+      name: project.name,
+      imageUrl: project.imageUrl,
+    })
+  );
+  const membersOptions = members?.data.map((project) => ({
     id: project.$id,
     name: project.name,
   }));

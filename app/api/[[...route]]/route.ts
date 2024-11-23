@@ -4,8 +4,7 @@ import auth from "@/app/api/_routes/auth.routes";
 import workspaces from "@/app/api/_routes/workspace.routes";
 import members from "@/app/api/_routes/member.routes";
 import tasks from "@/app/api/_routes/task.routes";
-
-import projects from "@/app/_features/projects/route";
+import projects from "@/app/api/_routes/project.routes";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 

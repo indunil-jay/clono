@@ -1,6 +1,11 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { ImageIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import {
   Form,
   FormControl,
@@ -8,26 +13,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../_components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../_components/ui/input";
-import { Button } from "../../_components/ui/button";
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
+} from "@/app/_components/ui/card";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { useRef } from "react";
-import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
-import Image from "next/image";
-import { ImageIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
+
 import { cn } from "@/app/_lib/utils";
-import { useCreateProject } from "./hooks/useCreateProject";
-import { createProjectSchemaForm } from "./schema";
+import { useCreateProject } from "@/app/_features/projects/hooks/use-create-project";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
+import { createProjectFormSchema } from "@/src/interface-adapter/validation-schemas/project";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 interface CreateProjectFormProps {
   onCancle?: () => void;
@@ -37,8 +40,8 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
   const { mutate, isPending } = useCreateProject();
   const workspaceId = useWorkspaceId();
 
-  const form = useForm<z.infer<typeof createProjectSchemaForm>>({
-    resolver: zodResolver(createProjectSchemaForm.omit({ workspaceId: true })),
+  const form = useForm<z.infer<typeof createProjectFormSchema>>({
+    resolver: zodResolver(createProjectFormSchema.omit({ workspaceId: true })),
     defaultValues: {
       name: "",
       image: "",
@@ -56,9 +59,7 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
     }
   };
 
-  const onSubmit = (values: z.infer<typeof createProjectSchemaForm>) => {
-    //TODO:error handle and redirection to workspace
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof createProjectFormSchema>) => {
     const formData = {
       ...values,
       workspaceId,
@@ -69,8 +70,7 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //onCancle?.(); router clear up url,
-          router.push(`/workspaces/${workspaceId}/projects/${data.$id}`);
+          router.push(`/workspaces/${workspaceId}/projects/${data?.$id}`);
         },
       }
     );
@@ -191,7 +191,14 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
                 Cancel
               </Button>
               <Button type="submit" size={"lg"} disabled={isPending}>
-                Create project
+                {isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span>Creating project</span>
+                    <SpinnerCircle />
+                  </span>
+                ) : (
+                  "Create project"
+                )}
               </Button>
             </div>
           </form>

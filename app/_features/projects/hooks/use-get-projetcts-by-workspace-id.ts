@@ -1,11 +1,11 @@
 import { client } from "@/app/_lib/honojs/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-interface UseGetProjectsProps {
+export const useGetProjectsByWorkspaceId = ({
+  workspaceId,
+}: {
   workspaceId: string;
-}
-
-export const useGetProjects = ({ workspaceId }: UseGetProjectsProps) => {
+}) => {
   const query = useQuery({
     queryKey: ["projects", workspaceId],
     queryFn: async () => {
@@ -13,7 +13,10 @@ export const useGetProjects = ({ workspaceId }: UseGetProjectsProps) => {
         query: { workspaceId },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch projects.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
 
       return await response.json();
     },

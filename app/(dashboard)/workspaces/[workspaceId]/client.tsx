@@ -1,8 +1,8 @@
 "use client";
 
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
-import { useCreateProjectModal } from "@/app/_features/projects/hooks/useCreateProjectModal";
-import { useGetProjects } from "@/app/_features/projects/hooks/useGetProjetct";
+import { useCreateProjectModal } from "@/app/_features/projects/hooks/use-create-project-modal";
+import { useGetProjectsByWorkspaceId } from "@/app/_features/projects/hooks/use-get-projetcts-by-workspace-id";
 import { useCreateTaskModal } from "@/app/_features/tasks/hooks/useCreateTaskModal";
 import { useGetTasks } from "@/app/_features/tasks/hooks/useGetTasks";
 import { PageError } from "@/app/_features/tasks/pag-error";
@@ -18,10 +18,10 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Project } from "@/app/_features/projects/types";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
-import { Member } from "@/app/_features/members/types";
 import { MemberAvatar } from "@/app/_features/members/member-avatar";
 import { useParams } from "next/navigation";
 import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
   const { data: analytics, isLoading: isLoadingAnalytics } =
@@ -32,20 +32,21 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
     workspaceId,
   });
 
-  const { data: projects, isLoading: isLoadingProjects } = useGetProjects({
-    workspaceId,
-  });
+  const { data: projects, status: projectStatus } = useGetProjectsByWorkspaceId(
+    {
+      workspaceId,
+    }
+  );
 
   const { data: members, isLoading: isLoadingMembers } =
     useGetMembersInWorkspace({
       workspaceId,
     });
 
-  const isLoading =
-    isLoadingAnalytics ||
-    isLoadingTasks ||
-    isLoadingProjects ||
-    isLoadingMembers;
+  if (projectStatus === "pending") return <SpinnerCircle />;
+  if (projectStatus === "error") return "project error";
+
+  const isLoading = isLoadingAnalytics || isLoadingTasks || isLoadingMembers;
 
   if (isLoading) return <PageLoader />;
 
@@ -116,8 +117,8 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <TaskList tasks={tasks.documents} total={tasks.total} />
         <ProjectList
-          projects={projects.data.documents}
-          total={projects.data.total}
+          projects={projects.data!.workspaceAllProjects as unknown as Project}
+          total={projects.data!.totolProjects}
         />
         {/* <MembersList members={members.data} total={4} /> */}
       </div>
@@ -228,7 +229,7 @@ export const ProjectList = ({ projects, total }: ProjectListprops) => {
 };
 
 interface MembersListProps {
-  members: Member[];
+  members: any[];
   total: number;
 }
 export const MembersList = ({ members, total }: MembersListProps) => {

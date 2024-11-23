@@ -1,19 +1,24 @@
 "use client";
 
 import { RiAddCircleFill } from "react-icons/ri";
-import { useGetProjects } from "./hooks/useGetProjetct";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/app/_lib/utils";
-import { useCreateProjectModal } from "./hooks/useCreateProjectModal";
+import { useCreateProjectModal } from "./hooks/use-create-project-modal";
 import { ProjectAvatar } from "./project-avatar";
+import { useGetProjectsByWorkspaceId } from "./hooks/use-get-projetcts-by-workspace-id";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 export const Projects = () => {
   const workspaceId = useWorkspaceId();
-  const { data } = useGetProjects({ workspaceId });
+  const { data, status } = useGetProjectsByWorkspaceId({ workspaceId });
   const pathname = usePathname();
   const { open } = useCreateProjectModal();
+
+  if (status === "pending") return <SpinnerCircle />;
+  if (status === "error") return "error";
+
   return (
     <div className="flex flex-col gap-y-2">
       <div className="flex items-center justify-between">
@@ -26,7 +31,7 @@ export const Projects = () => {
         />
       </div>
 
-      {data?.data.documents.map((project) => {
+      {data.data?.workspaceAllProjects.map((project) => {
         const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
         const isActive = pathname === href;
 

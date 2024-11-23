@@ -1,6 +1,9 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRef } from "react";
+
 import {
   Form,
   FormControl,
@@ -8,28 +11,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../_components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../_components/ui/input";
-import { Button } from "../../_components/ui/button";
+} from "@/app/_components/ui/form";
+
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { useRef } from "react";
-import { Avatar, AvatarFallback } from "../../_components/ui/avatar";
+} from "@/app/_components/ui/card";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+
+import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
 import Image from "next/image";
-import { ArrowLeft, CopyIcon, ImageIcon } from "lucide-react";
+import { ArrowLeft, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/app/_hooks/use-toast";
-import { Project } from "./types";
-import { useUpdateProject } from "./hooks/useUpdateProject";
+import { useUpdateProject } from "./hooks/use-update-project";
 import { updateProjectSchemaForm } from "./schema";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
-import { useDeleteProject } from "./hooks/useDeleteProject";
+import { useDeleteProject } from "./hooks/use-delete-project";
+import { Project } from "./types";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 interface UpdateProjectFormProps {
   onCancle?: () => void;
@@ -62,7 +65,6 @@ export const UpdateProjectForm = ({
   };
 
   const onSubmit = (values: z.infer<typeof updateProjectSchemaForm>) => {
-    //TODO:error handle and redirection to workspace
     const formData = {
       ...values,
       image: values.image instanceof File ? values.image : "",
@@ -72,8 +74,7 @@ export const UpdateProjectForm = ({
       {
         onSuccess: ({ data }) => {
           form.reset();
-          //onCancle?.(); router clear up url,
-          router.push(`/workspaces/${data.workspaceId}/projects/${data.$id}`);
+          router.push(`/workspaces/${data!.workspaceId}/projects/${data!.$id}`);
         },
       }
     );
@@ -95,7 +96,7 @@ export const UpdateProjectForm = ({
       { param: { projectId: initialValues.$id } },
       {
         onSuccess: () => {
-          router.push(`/workspaces/${initialValues.workspaceId}`);
+          return router.push(`/workspaces/${initialValues.workspaceId}`);
         },
       }
     );
@@ -217,8 +218,19 @@ export const UpdateProjectForm = ({
               <DottedSeparator className="py-7" />
 
               <div className="flex items-center justify-between">
-                <Button type="submit" size={"lg"} disabled={isPending}>
-                  Save Changes
+                <Button
+                  type="submit"
+                  size={"lg"}
+                  disabled={isPending || !form.formState.isDirty}
+                >
+                  {isPending ? (
+                    <span className="flex gap-2">
+                      <span>Saving Changes</span>
+                      <SpinnerCircle />
+                    </span>
+                  ) : (
+                    <span>Save Changes</span>
+                  )}
                 </Button>
               </div>
             </form>
