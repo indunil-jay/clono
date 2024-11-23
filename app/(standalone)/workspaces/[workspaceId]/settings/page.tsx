@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { UpdateWorkspaceForm } from "@/app/_features/workspace/update-workspace-form ";
 import { getWorkspaceById } from "@/app/_features/workspace/utils";
 import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
+import { WorkspaceCollectionDocument } from "@/src/entities/workspace.entity";
 
 export default async function Page({
   params,
@@ -14,9 +15,9 @@ export default async function Page({
 
   const { workspaceId } = await params;
 
-  const initialValues = await getWorkspaceById({
+  const initialValues = (await getWorkspaceById({
     workspaceId,
-  });
+  })) as WorkspaceCollectionDocument;
 
   if (!initialValues) {
     redirect(`/workspace/${workspaceId}`);

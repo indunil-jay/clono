@@ -2,7 +2,7 @@ import { MoreHorizontal } from "lucide-react";
 import { TaskActions } from "./task-actions";
 import { Task } from "./types";
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
-import { MemberAvatar } from "../members/components/member-avatar";
+import { MemberAvatar } from "../members/member-avatar";
 import { TaskDate } from "./task-date";
 import { ProjectAvatar } from "../projects/project-avatar";
 

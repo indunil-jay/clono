@@ -11,3 +11,13 @@ export type MemberCollectionInput = z.infer<typeof memberSchema>;
 
 export type MemberCollectionDocument = Models.Document &
   z.infer<typeof memberSchema>;
+
+const workspacesUpdateSchema = memberSchema
+  .pick({
+    role: true,
+  })
+  .partial();
+
+export type MemberCollectionUpdateInput = z.infer<
+  typeof workspacesUpdateSchema
+>;

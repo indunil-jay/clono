@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
-import { MemberAvatar } from "../members/components/member-avatar";
+import { MemberAvatar } from "../members/member-avatar";
 import { Task, TaskStatus } from "./types";
 import { ProjectAvatar } from "../projects/project-avatar";
 import { useUpdateTask } from "./hooks/useUpdateTask";

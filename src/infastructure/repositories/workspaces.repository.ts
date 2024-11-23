@@ -54,6 +54,7 @@ export class WorkspacesRepository implements IWorkspacesRepository {
         name: workspaceObj.name,
         imageUrl: workspaceObj.imageUrl,
         inviteCode: workspaceObj.inviteCode,
+        userId: workspaceObj.userId,
       }
     );
   }

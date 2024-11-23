@@ -1,7 +1,7 @@
 import { cn } from "@/app/_lib/utils";
 import { Project } from "../projects/types";
 import { TaskStatus } from "./types";
-import { MemberAvatar } from "../members/components/member-avatar";
+import { MemberAvatar } from "../members/member-avatar";
 import { ProjectAvatar } from "../projects/project-avatar";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { useRouter } from "next/navigation";

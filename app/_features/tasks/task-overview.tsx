@@ -4,7 +4,7 @@ import { Task } from "./types";
 import { PencilIcon } from "lucide-react";
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { OverviewProperty } from "./overview-property";
-import { MemberAvatar } from "../members/components/member-avatar";
+import { MemberAvatar } from "../members/member-avatar";
 import { TaskDate } from "./task-date";
 import { Badge } from "@/app/_components/ui/badge";
 import { snakeCaseToTitleCase } from "./utils";

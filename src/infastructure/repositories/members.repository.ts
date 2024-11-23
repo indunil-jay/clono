@@ -5,6 +5,7 @@ import { IMembersRepository } from "@/src/application/repositories/members.repos
 import {
   MemberCollectionDocument,
   MemberCollectionInput,
+  MemberCollectionUpdateInput,
 } from "@/src/entities/member.entity";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
@@ -12,6 +13,29 @@ import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()
 export class MembersRepository implements IMembersRepository {
+  public async update(
+    documentId: string,
+    obj: MemberCollectionUpdateInput
+  ): Promise<MemberCollectionDocument> {
+    const { databases } = await createSessionClient();
+    return await databases.updateDocument(
+      DATABASE_ID,
+      MEMBERS_COLLECTION_ID,
+      documentId,
+      obj
+    );
+  }
+
+  public async deleteWorkspaceMember(documentId: string): Promise<void> {
+    const { databases } = await createSessionClient();
+
+    await databases.deleteDocument(
+      DATABASE_ID,
+      MEMBERS_COLLECTION_ID,
+      documentId
+    );
+  }
+
   public async getAllMembersInWorkspace(
     workspaceId: string
   ): Promise<DocumentList<MemberCollectionDocument>> {
@@ -39,7 +63,6 @@ export class MembersRepository implements IMembersRepository {
     workspaceId: string
   ): Promise<MemberCollectionDocument> {
     const { databases } = await createSessionClient();
-
     const members = await databases.listDocuments(
       DATABASE_ID,
       MEMBERS_COLLECTION_ID,

@@ -1,8 +1,8 @@
-import { MemberRole } from "@/app/_features/members/types";
 import { getInjection } from "@/DI/container";
 import { CreateWorkspaceFormInput } from "@/src/interface-adapter/validation-schemas/workspace";
 import { generateInviteCode } from "@/src/lib/generate-invite-code";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { MemberRole } from "@/src/entities/member.enum";
 
 export const createWorkspaceUseCase = async (
   data: CreateWorkspaceFormInput

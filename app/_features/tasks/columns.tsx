@@ -4,7 +4,7 @@ import { Task } from "./types";
 import { Button } from "@/app/_components/ui/button";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { ProjectAvatar } from "../projects/project-avatar";
-import { MemberAvatar } from "../members/components/member-avatar";
+import { MemberAvatar } from "../members/member-avatar";
 import { TaskDate } from "./task-date";
 import { Badge } from "@/app/_components/ui/badge";
 import { snakeCaseToTitleCase } from "./utils";

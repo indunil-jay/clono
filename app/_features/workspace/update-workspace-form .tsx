@@ -36,6 +36,9 @@ import { WorkspaceCollectionDocument } from "@/src/entities/workspace.entity";
 import { useUpdateInviteCodeWorkspace } from "@/app/_features/workspace/hooks/use-update-workspace-invite-code";
 import { useUpdateWorkspace } from "@/app/_features/workspace/hooks/use-update-workspace";
 import { useDeleteWorkspace } from "@/app/_features/workspace/hooks/use-delete-workspace";
+import { useCurrent } from "../auth/hooks/use-current";
+import { useGetWorkspacesInfo } from "./hooks/useGetWorkspaceInfo";
+import { useWorkspaceId } from "./hooks/useWorkspaceId";
 
 interface UpdateWorkspaceFormProps {
   onCancle?: () => void;
@@ -56,10 +59,23 @@ export const UpdateWorkspaceForm = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const workspaceId = useWorkspaceId();
 
-  //update workspace
   const { mutate: updateWorkspace, isPending: isUpdatePending } =
     useUpdateWorkspace();
+
+  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
+    useDeleteWorkspace();
+
+  const { data: currentUserData, status: currentUserStatus } = useCurrent();
+
+  const { mutate: updateInviteLink, isPending: isUpdatingWorkspaceInviteCode } =
+    useUpdateInviteCodeWorkspace();
+
+  const { data: workspaceInfoData, status: workspaceInfoStatus } =
+    useGetWorkspacesInfo({ workspaceId });
+
+  //update workspace
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -86,9 +102,6 @@ export const UpdateWorkspaceForm = ({
 
   //delete workspace
 
-  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
-    useDeleteWorkspace();
-
   const [DeleteModal, confirmDelete] = useConfirmModal({
     title: "Delete Workspace",
     message: "This action cannot be undone",
@@ -111,8 +124,6 @@ export const UpdateWorkspaceForm = ({
   };
 
   //update workspace invite-code
-  const { mutate: updateInviteLink, isPending: isUpdatingWorkspaceInviteCode } =
-    useUpdateInviteCodeWorkspace();
 
   const [ResetModal, confirmReset] = useConfirmModal({
     title: "Reset Workspace",
@@ -145,6 +156,12 @@ export const UpdateWorkspaceForm = ({
       })
     );
   };
+  if (currentUserStatus === "pending" || workspaceInfoStatus === "pending")
+    return "loading";
+  if (currentUserStatus === "error" || workspaceInfoStatus === "error")
+    return "error";
+
+  const isAdmin = currentUserData.$id === workspaceInfoData.data?.userId;
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -327,27 +344,29 @@ export const UpdateWorkspaceForm = ({
         </CardContent>
       </Card>
 
-      <Card className="w-full h-full border-none shadow-none">
-        <CardContent className="p-7">
-          <div className="flex flex-col">
-            <h3 className="font-bold">Danger Zone</h3>
-            <p className="text-sm text-muted-foreground">
-              Deleting a workspace is irreversible and will remove all
-              associated data.
-            </p>
-            <Button
-              className="mt-7 w-fit ml-auto"
-              size={"sm"}
-              variant={"destructive"}
-              type="button"
-              disabled={isDeletingWorkspace}
-              onClick={handleDelete}
-            >
-              Delete Workspace
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {isAdmin && (
+        <Card className="w-full h-full border-none shadow-none">
+          <CardContent className="p-7">
+            <div className="flex flex-col">
+              <h3 className="font-bold">Danger Zone</h3>
+              <p className="text-sm text-muted-foreground">
+                Deleting a workspace is irreversible and will remove all
+                associated data.
+              </p>
+              <Button
+                className="mt-7 w-fit ml-auto"
+                size={"sm"}
+                variant={"destructive"}
+                type="button"
+                disabled={isDeletingWorkspace}
+                onClick={handleDelete}
+              >
+                Delete Workspace
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

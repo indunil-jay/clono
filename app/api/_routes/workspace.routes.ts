@@ -9,11 +9,6 @@ import {
   DATABASE_ID,
   WORKSPACE_COLLECTION_ID,
 } from "@/src/lib/constants";
-import { Workspace } from "@/app/_features/workspace/types";
-import {
-  createWorkspaceSchemaForm,
-  updateWorkspaceSchemaForm,
-} from "@/app/_features/workspace/schema";
 import { getMember } from "@/app/_features/members/utils";
 import { TaskStatus } from "@/app/_features/tasks/types";
 
@@ -24,11 +19,16 @@ import { joinMemberToWorkspaceController } from "@/src/interface-adapter/control
 import { getAllWorkspacesAnallticsController } from "@/src/interface-adapter/controllers/workspaces/get-all-workspaces-analytics.controller";
 import { updateWorkspaceInviteCodeController } from "@/src/interface-adapter/controllers/workspaces/update-workspace-invite-code.controller";
 import { createWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/create-workspace.controller";
+import {
+  createWorkspaceFormSchema,
+  updateWorkspaceFormSchema,
+} from "@/src/interface-adapter/validation-schemas/workspace";
+import { getWorkspaceInfoByIdController } from "@/src/interface-adapter/controllers/workspaces/get-workspace-info-by-id.controller";
 
 const app = new Hono()
   .post(
     "/",
-    zValidator("form", createWorkspaceSchemaForm),
+    zValidator("form", createWorkspaceFormSchema),
     sessionMiddleware,
     async (ctx) => {
       const { name, image } = ctx.req.valid("form");
@@ -54,7 +54,7 @@ const app = new Hono()
   .patch(
     "/:workspaceId",
     sessionMiddleware,
-    zValidator("form", updateWorkspaceSchemaForm),
+    zValidator("form", updateWorkspaceFormSchema),
     async (ctx) => {
       const { workspaceId } = ctx.req.param();
       const { name, image } = ctx.req.valid("form");
@@ -108,24 +108,16 @@ const app = new Hono()
   })
 
   .get("/:workspaceId/info", sessionMiddleware, async (ctx) => {
-    const databases = ctx.get("databases");
     const { workspaceId } = ctx.req.param();
-
-    const workspace = await databases.getDocument<Workspace>(
-      DATABASE_ID,
-      WORKSPACE_COLLECTION_ID,
-      workspaceId
-    );
-
-    return ctx.json({
-      data: {
-        workspaceId: workspace.$id,
-        name: workspace.name,
-        imageUrl: workspace.imageUrl,
-        userId: workspace.userId,
-      },
-    });
+    try {
+      const workspaceInfo = await getWorkspaceInfoByIdController(workspaceId);
+      return ctx.json({ message: "success", data: workspaceInfo });
+    } catch (error) {
+      return ctx.json({ message: "fail", data: null });
+    }
   })
+
+  // TODO:
   .get("/analytics", sessionMiddleware, async (ctx) => {
     try {
       const data = await getAllWorkspacesAnallticsController();

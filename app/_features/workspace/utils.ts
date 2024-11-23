@@ -6,7 +6,6 @@ import {
 
 import { Query } from "node-appwrite";
 import { getMember } from "../members/utils";
-import { Workspace } from "./types";
 import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 
 export const getCurrentWorkspace = async () => {
@@ -20,8 +19,6 @@ export const getCurrentWorkspace = async () => {
       MEMBERS_COLLECTION_ID,
       [Query.equal("userId", user.$id)]
     );
-
-    console.log("MEMBERS GET CURRENT WORKSPACE", { members });
 
     const workspaceIds = members.documents.map((member) => member.workspaceId);
 
@@ -61,7 +58,7 @@ export const getWorkspaceById = async ({
     if (!members) {
       return null;
     }
-    const workspaces = await databases.getDocument<Workspace>(
+    const workspaces = await databases.getDocument(
       DATABASE_ID,
       WORKSPACE_COLLECTION_ID,
       workspaceId
@@ -83,7 +80,7 @@ export const getWorkspaceInfo = async ({
   try {
     const { databases } = await createSessionClient();
 
-    const workspace = await databases.getDocument<Workspace>(
+    const workspace = await databases.getDocument(
       DATABASE_ID,
       WORKSPACE_COLLECTION_ID,
       workspaceId

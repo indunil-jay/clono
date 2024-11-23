@@ -15,6 +15,7 @@ const workspacesUpdateSchema = workspacesSchema
     name: true,
     imageUrl: true,
     inviteCode: true,
+    userId: true,
   })
   .partial();
 

@@ -19,7 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Project } from "@/app/_features/projects/types";
 import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
 import { Member } from "@/app/_features/members/types";
-import { MemberAvatar } from "@/app/_features/members/components/member-avatar";
+import { MemberAvatar } from "@/app/_features/members/member-avatar";
 import { useParams } from "next/navigation";
 import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
 

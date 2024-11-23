@@ -20,14 +20,15 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
-import { MemberAvatar } from "@/app/_features/members/components/member-avatar";
+import { MemberAvatar } from "@/app/_features/members/member-avatar";
 
-import { useGetMembersInWorkspace } from "./hooks/use-get-members-in-workspace";
-import { useDeleteMember } from "./hooks/useDeleteMember";
-import { useUpdateMember } from "./hooks/useUpdateMember";
-import { MemberRole } from "./types";
+import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
+import { useDeleteMember } from "@/app/_features/members/hooks/use-delete-member";
+import { MemberRole } from "@/src/entities/member.enum";
+import { useCurrent } from "@/app/_features/auth/hooks/use-current";
+import { useUpdateWorkspaceMemberRole } from "@/app/_features/members/hooks/use-update-workspace-member-role";
+
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { useCurrent } from "../auth/hooks/use-current";
 import { useGetWorkspacesInfo } from "../workspace/hooks/useGetWorkspaceInfo";
 
 export const MembersList = () => {
@@ -46,25 +47,25 @@ export const MembersList = () => {
   const { mutate: deleteMember, isPending: isMemberDeleting } =
     useDeleteMember();
   const { mutate: updateMember, isPending: isMemberUpdating } =
-    useUpdateMember();
+    useUpdateWorkspaceMemberRole();
   const router = useRouter();
 
   const { data: currentUserData, status: currentUserStatus } = useCurrent();
   const { data: workspaceInfoData, status: workspaceInfoStatus } =
     useGetWorkspacesInfo({ workspaceId });
 
-  const handleUpdateMember = (memberId: string, role: MemberRole) => {
-    updateMember({ json: { role }, param: { memberId } });
+  const handleUpdateMember = (memberId: string) => {
+    updateMember({ param: { memberId, workspaceId } });
   };
 
   const handleDeleteMember = async (memberId: string) => {
     const ok = await confirm();
     if (!ok) return;
     deleteMember(
-      { param: { memberId } },
+      { param: { memberId, workspaceId } },
       {
         onSuccess: () => {
-          router.refresh();
+          return router.refresh();
         },
       }
     );
@@ -83,7 +84,6 @@ export const MembersList = () => {
   )
     return "error";
 
-  // Determine if the current user is the workspace creator (admin)
   const isAdmin = currentUserData.$id === workspaceInfoData.data.userId;
 
   return (
@@ -121,7 +121,7 @@ export const MembersList = () => {
                 </div>
               </div>
 
-              {isAdmin && (
+              {isAdmin && !(member.role === MemberRole.ADMIN) && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -136,14 +136,13 @@ export const MembersList = () => {
                   <DropdownMenuContent side="bottom" align="end">
                     <DropdownMenuItem
                       className="font-medium"
-                      onClick={() =>
-                        handleUpdateMember(member.$id, MemberRole.ADMIN)
-                      }
+                      onClick={() => handleUpdateMember(member.userId)}
                       disabled={isMemberUpdating}
                     >
                       Set as Administrator
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+
+                    {/* <DropdownMenuItem
                       className="font-medium"
                       onClick={() =>
                         handleUpdateMember(member.$id, MemberRole.MEMBER)
@@ -151,17 +150,15 @@ export const MembersList = () => {
                       disabled={isMemberUpdating}
                     >
                       Set as Member
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
 
-                    {!(member.role === MemberRole.ADMIN) && (
-                      <DropdownMenuItem
-                        className="font-medium text-amber-700"
-                        onClick={() => handleDeleteMember(member.$id)}
-                        disabled={isMemberDeleting}
-                      >
-                        Remove {member.name}
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem
+                      className="font-medium text-amber-700"
+                      onClick={() => handleDeleteMember(member.userId)}
+                      disabled={isMemberDeleting}
+                    >
+                      Remove {member.name}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
