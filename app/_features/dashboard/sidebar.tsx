@@ -16,6 +16,7 @@ export const Sidebar = () => {
       <WorkspaceSwitcher />
       <DottedSeparator className="my-4" />
       <Navigation />
+      <DottedSeparator className="my-4" />
       <Projects />
     </aside>
   );

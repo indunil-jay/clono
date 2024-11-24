@@ -1,6 +1,7 @@
 "use client";
 
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+import { Button } from "@/app/_components/ui/button";
 import {
   CardHeader,
   Card,
@@ -8,9 +9,51 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
+import { useGetProject } from "@/app/_features/projects/hooks/use-get-project";
 import { useGetProjectsAnalitics } from "@/app/_features/projects/hooks/useGetProjetctAnalitics";
+import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
+import { TaskViewSwitcher } from "@/app/_features/tasks/task-view-switcher";
 import { cn } from "@/app/_lib/utils";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+
+export const ProjectClient = ({ projectId }: { projectId: string }) => {
+  const { data, isPending } = useGetProject({ projectId });
+
+  if (isPending) return "loading project";
+
+  const project = data?.data!;
+  return (
+    <div className="flex flex-col gap-y-4 ">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-2">
+          <ProjectAvatar
+            name={project.name}
+            image={project.imageUrl}
+            className="size-8"
+          />
+          <p>{project.name}</p>
+        </div>
+
+        <div>
+          <Button variant={"secondary"} asChild size={"sm"}>
+            <Link
+              href={`/workspaces/${project.workspaceId}/projects/${project.$id}/settings`}
+            >
+              Edit Project
+              <Pencil />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* <ProjectAnalitics projectId={projectId} /> */}
+
+      <TaskViewSwitcher />
+    </div>
+  );
+};
 
 export const ProjectAnalitics = ({ projectId }: { projectId: string }) => {
   const { data: analytics, isLoading } = useGetProjectsAnalitics({ projectId });

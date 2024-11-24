@@ -28,18 +28,15 @@ import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
 
 import { cn } from "@/app/_lib/utils";
 import { useCreateProject } from "@/app/_features/projects/hooks/use-create-project";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { createProjectFormSchema } from "@/src/interface-adapter/validation-schemas/project";
 import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
+import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 
 interface CreateProjectFormProps {
   onCancle?: () => void;
 }
 
 export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
-  const { mutate, isPending } = useCreateProject();
-  const workspaceId = useWorkspaceId();
-
   const form = useForm<z.infer<typeof createProjectFormSchema>>({
     resolver: zodResolver(createProjectFormSchema.omit({ workspaceId: true })),
     defaultValues: {
@@ -48,6 +45,8 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
     },
   });
 
+  const { mutate, isPending } = useCreateProject();
+  const workspaceId = useWorkspaceId();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -187,6 +186,7 @@ export const CreateProjectForm = ({ onCancle }: CreateProjectFormProps) => {
                 variant={"secondary"}
                 disabled={isPending}
                 className={cn(!onCancle && "invisible")}
+                onClick={onCancle}
               >
                 Cancel
               </Button>

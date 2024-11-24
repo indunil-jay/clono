@@ -84,7 +84,7 @@ export const MembersList = () => {
   )
     return "error";
 
-  const isAdmin = currentUserData.$id === workspaceInfoData.data.userId;
+  const isAdmin = currentUserData.$id === workspaceInfoData?.data?.userId;
 
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -141,16 +141,6 @@ export const MembersList = () => {
                     >
                       Set as Administrator
                     </DropdownMenuItem>
-
-                    {/* <DropdownMenuItem
-                      className="font-medium"
-                      onClick={() =>
-                        handleUpdateMember(member.$id, MemberRole.MEMBER)
-                      }
-                      disabled={isMemberUpdating}
-                    >
-                      Set as Member
-                    </DropdownMenuItem> */}
 
                     <DropdownMenuItem
                       className="font-medium text-amber-700"

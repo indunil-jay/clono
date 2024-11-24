@@ -9,10 +9,8 @@ import {
   TASKS_COLLECTION_ID,
 } from "@/src/lib/constants";
 import { ID, Query } from "node-appwrite";
-import { createAdminClient } from "@/src/lib/appwrite/appwrite";
 import { Task, TaskStatus } from "@/app/_features/tasks/types";
 import { getMember } from "@/app/_features/members/utils";
-import { Project } from "@/app/_features/projects/types";
 import { createTaskSchema } from "@/app/_features/tasks/schemas";
 import { createTaskController } from "@/src/interface-adapter/controllers/tasks/create-task.controller";
 import { deleteTaskController } from "@/src/interface-adapter/controllers/tasks/delete-task.controller";
@@ -222,31 +220,6 @@ const app = new Hono()
       );
       return c.json({ data: updatedTasks });
     }
-  )
-
-  //this is getting project by id
-  .get("/:projectId", sessionMiddleware, async (c) => {
-    const user = c.get("user");
-    const databases = c.get("databases");
-    const { projectId } = c.req.param();
-
-    const project = await databases.getDocument<Project>(
-      DATABASE_ID,
-      PROJECTS_COLLECTION_ID,
-      projectId
-    );
-
-    const member = await getMember({
-      databases,
-      workspaceId: project.workspaceId,
-      userId: user.$id,
-    });
-
-    if (!member) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-
-    return c.json({ data: project });
-  });
+  );
 
 export default app;

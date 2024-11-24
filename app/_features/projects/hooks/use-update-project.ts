@@ -1,10 +1,9 @@
 "use client";
 import { InferRequestType, InferResponseType } from "hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { client } from "@/app/_lib/honojs/rpc";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { error } from "console";
 
 type ResponseType = InferResponseType<
   (typeof client.api.projects)[":projectId"]["$patch"],

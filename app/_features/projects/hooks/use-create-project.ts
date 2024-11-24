@@ -15,10 +15,17 @@ export const useCreateProject = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ form }) => {
       const response = await client.api.projects["$post"]({ form });
+
+      // Check if the response is not ok and handle error
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
+        const errorData = await response.json(); // Parse error details
+        // If response JSON has the message, we use it, otherwise, fall back to default message
+        throw new Error(
+          errorData?.message || "An error occurred while creating the project."
+        );
       }
+
+      // Return the response body if the request was successful
       return await response.json();
     },
     onSuccess: async () => {
@@ -27,10 +34,10 @@ export const useCreateProject = () => {
       });
       return await queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
         title: "Failed to create project",
-        description: String(error.message),
+        description: error.message,
       });
     },
   });

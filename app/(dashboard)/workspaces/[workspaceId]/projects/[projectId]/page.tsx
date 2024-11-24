@@ -1,12 +1,6 @@
-import { Button } from "@/app/_components/ui/button";
-import { ProjectAvatar } from "@/app/_features/projects/project-avatar";
-import { getProjectById } from "@/app/_features/projects/utils";
-import { TaskViewSwitcher } from "@/app/_features/tasks/task-view-switcher";
 import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
-import { Pencil } from "lucide-react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ProjectAnalitics } from "./client";
+import { ProjectClient } from "./client";
 
 export default async function Page({
   params,
@@ -18,36 +12,5 @@ export default async function Page({
 
   if (!user) redirect("/sign-in");
 
-  const project = await getProjectById({ projectId });
-
-  if (!project) return;
-  return (
-    <div className="flex flex-col gap-y-4 ">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
-          <ProjectAvatar
-            name={project.name}
-            image={project.imageUrl}
-            className="size-8"
-          />
-          <p>{project.name}</p>
-        </div>
-
-        <div>
-          <Button variant={"secondary"} asChild size={"sm"}>
-            <Link
-              href={`/workspaces/${project.workspaceId}/projects/${project.$id}/settings`}
-            >
-              Edit Project
-              <Pencil />
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      <ProjectAnalitics projectId={projectId} />
-
-      <TaskViewSwitcher />
-    </div>
-  );
+  return <ProjectClient projectId={projectId} />;
 }
