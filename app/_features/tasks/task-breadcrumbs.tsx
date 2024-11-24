@@ -6,7 +6,7 @@ import { Task } from "./types";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { ChevronRightIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
-import { useDeleteTask } from "./hooks/useDeleteTask";
+import { useDeleteTask } from "./hooks/use-delete-task";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
 import { useRouter } from "next/navigation";
 

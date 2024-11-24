@@ -46,6 +46,7 @@ const app = new Hono()
       }
     }
   )
+
   .get(
     "/",
     sessionMiddleware,
@@ -68,6 +69,18 @@ const app = new Hono()
     }
   )
 
+  .delete("/:projectId", sessionMiddleware, async (ctx) => {
+    const { projectId } = ctx.req.param();
+
+    try {
+      await deleteProjectController(projectId);
+      return ctx.json({ message: "success" });
+    } catch (error) {
+      const err = error as Error;
+      return ctx.json({ message: err.message });
+    }
+  })
+
   .patch(
     "/:projectId",
     sessionMiddleware,
@@ -88,18 +101,6 @@ const app = new Hono()
       }
     }
   )
-
-  .delete("/:projectId", sessionMiddleware, async (ctx) => {
-    const { projectId } = ctx.req.param();
-
-    try {
-      await deleteProjectController(projectId);
-      return ctx.json({ message: "success" });
-    } catch (error) {
-      const err = error as Error;
-      return ctx.json({ message: err.message });
-    }
-  })
 
   .get("/:projectId/analytics", sessionMiddleware, async (ctx) => {
     const user = ctx.get("user");

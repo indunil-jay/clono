@@ -9,7 +9,7 @@ export const projectSchema = z.object({
 
 export type ProjectsCollectionInput = z.infer<typeof projectSchema>;
 
-export type ProjectseCollectionDocument = Models.Document &
+export type ProjectsCollectionDocument = Models.Document &
   z.infer<typeof projectSchema>;
 
 export const projectUpdateSchema = projectSchema

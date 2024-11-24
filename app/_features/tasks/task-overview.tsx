@@ -11,10 +11,12 @@ import { snakeCaseToTitleCase } from "./utils";
 import { useUpdateTaskModal } from "./hooks/useUpdateTaskModal";
 
 interface TaskOverviewProps {
-  task: Task;
+  task: any;
+  name: string;
 }
 
-export const TaskOverview = ({ task }: TaskOverviewProps) => {
+export const TaskOverview = ({ task, name }: TaskOverviewProps) => {
+  console.log("TaskOverview", task);
   const { open } = useUpdateTaskModal();
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
@@ -33,8 +35,8 @@ export const TaskOverview = ({ task }: TaskOverviewProps) => {
         <DottedSeparator className="mt-4" />
         <div className="flex flex-col gap-y-4">
           <OverviewProperty lable="Assignee">
-            <MemberAvatar name={task.assignee.name} className="size-6" />
-            <p className="text-sm font-medium">{task.assignee.name}</p>
+            <MemberAvatar name={name} className="size-6" />
+            <p className="text-sm font-medium">{name}</p>
           </OverviewProperty>
           <OverviewProperty lable="Due Date">
             <TaskDate value={task.dueDate} className="text-sm font-medium" />

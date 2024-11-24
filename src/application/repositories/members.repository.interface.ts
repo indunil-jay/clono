@@ -8,23 +8,25 @@ import { DocumentList } from "@/src/entities/workspace.entity";
 export interface IMembersRepository {
   create: (data: MemberCollectionInput) => Promise<MemberCollectionDocument>;
 
-  getWorkspaceMember: (
+  getWorkspaceMember(
     memberId: string,
     workspaceId: string
-  ) => Promise<MemberCollectionDocument>;
+  ): Promise<MemberCollectionDocument>;
 
-  deleteWorkspaceMember: (documentId: string) => Promise<void>;
+  deleteWorkspaceMember(documentId: string): Promise<void>;
 
-  getAllByUser: (
-    userId: string
-  ) => Promise<DocumentList<MemberCollectionDocument>>;
+  getAllByUser(userId: string): Promise<DocumentList<MemberCollectionDocument>>;
 
-  getAllMembersInWorkspace: (
+  getAllMembersInWorkspace(
     workspaceId: string
-  ) => Promise<DocumentList<MemberCollectionDocument>>;
+  ): Promise<DocumentList<MemberCollectionDocument>>;
 
-  update: (
+  update(
     documentId: string,
     obj: MemberCollectionUpdateInput
-  ) => Promise<MemberCollectionDocument>;
+  ): Promise<MemberCollectionDocument>;
+
+  getAllMembersByIds(
+    userIds: string[]
+  ): Promise<DocumentList<MemberCollectionDocument>>;
 }

@@ -1,11 +1,7 @@
 import { client } from "@/app/_lib/honojs/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-interface UseGetTaskByIdProps {
-  taskId: string;
-}
-
-export const useGetTasksById = ({ taskId }: UseGetTaskByIdProps) => {
+export const useGetTasksById = ({ taskId }: { taskId: string }) => {
   const query = useQuery({
     queryKey: ["task", taskId],
     queryFn: async () => {
@@ -13,7 +9,10 @@ export const useGetTasksById = ({ taskId }: UseGetTaskByIdProps) => {
         param: { taskId },
       });
 
-      if (!response.ok) throw new Error("Failed to fetch task.");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
 
       return await response.json();
     },

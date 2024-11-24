@@ -8,7 +8,7 @@ import {
   GoHome,
   GoHomeFill,
 } from "react-icons/go";
-import { useParams, usePathname } from "next/navigation";
+import { redirect, useParams, usePathname } from "next/navigation";
 
 const routes = [
   {
@@ -44,6 +44,10 @@ const routes = [
 export const Navigation = () => {
   const { workspaceId } = useParams();
   const pathname = usePathname();
+
+  if (!workspaceId) {
+    return;
+  }
 
   return (
     <ul className="flex flex-col">

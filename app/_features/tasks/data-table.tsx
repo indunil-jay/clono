@@ -1,4 +1,5 @@
 "use client";
+import * as React from "react";
 
 import {
   ColumnDef,
@@ -11,8 +12,6 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
-import * as React from "react";
 import {
   Table,
   TableBody,
@@ -22,7 +21,6 @@ import {
   TableRow,
 } from "@/app/_components/ui/table";
 import { Button } from "@/app/_components/ui/button";
-import { Input } from "@/app/_components/ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -65,14 +63,14 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
       </div> */}
-      <div className="rounded-md border">
+      <div className="rounded-md border  ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead className="text-left" key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -93,7 +91,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell className="text-left" key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

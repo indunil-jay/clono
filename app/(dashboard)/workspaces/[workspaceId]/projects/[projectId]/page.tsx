@@ -44,6 +44,7 @@ export default async function Page({
           </Button>
         </div>
       </div>
+
       <ProjectAnalitics projectId={projectId} />
 
       <TaskViewSwitcher />

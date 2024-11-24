@@ -3,7 +3,7 @@ import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-wo
 import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Loader } from "lucide-react";
-import { useGetTasksById } from "./hooks/useGetTaskById";
+import { useGetTasksById } from "./hooks/use-get-task";
 import { UpdateTaskForm } from "./update-task-form ";
 
 interface UpdateTaskWrapperProps {

@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
 import { ExternalLinkIcon, Pencil, PencilIcon, Trash } from "lucide-react";
-import { useDeleteTask } from "./hooks/useDeleteTask";
+import { useDeleteTask } from "./hooks/use-delete-task";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";

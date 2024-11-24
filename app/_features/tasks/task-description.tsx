@@ -8,7 +8,7 @@ import { useUpdateTask } from "./hooks/useUpdateTask";
 import { Textarea } from "@/app/_components/ui/textarea";
 
 interface TaskDescriptionProps {
-  task: Task;
+  task: any;
 }
 
 export const TaskDescription = ({ task }: TaskDescriptionProps) => {

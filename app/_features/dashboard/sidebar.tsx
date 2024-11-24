@@ -1,9 +1,10 @@
 import Link from "next/link";
+
 import { Logo } from "@/app/_components/custom/logo";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { Navigation } from "./navigation";
-import { WorkspaceSwitcher } from "../workspace/workspace-switcher";
-import { Projects } from "../projects/projects";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+import { Navigation } from "@/app/_features/dashboard/navigation";
+import { WorkspaceSwitcher } from "@/app/_features/workspace/workspace-switcher";
+import { Projects } from "@/app/_features/projects/projects";
 
 export const Sidebar = () => {
   return (

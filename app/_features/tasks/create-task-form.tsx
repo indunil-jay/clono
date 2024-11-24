@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/app/_lib/utils";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { createTaskSchema } from "./schemas";
-import { useCreateTask } from "./hooks/useCreateTask";
+import { useCreateTask } from "./hooks/use-create-task";
 import { DatePicker } from "@/app/_components/custom/date-picker";
 import {
   Select,
@@ -38,7 +38,7 @@ import { ProjectAvatar } from "../projects/project-avatar";
 
 interface CreateTasksFormProps {
   onCancle?: () => void;
-  projectOptions: { id: string; name: string; imageUrl: string }[];
+  projectOptions: { id: string; name: string; imageUrl: string | undefined }[];
   memberOptions: { id: string; name: string }[];
 }
 
@@ -64,8 +64,7 @@ export const CreateTaskForm = ({
     mutate(
       { json: { ...values, workspaceId } },
       {
-        onSuccess: ({ data }) => {
-          console.log({ data });
+        onSuccess: () => {
           form.reset();
           router.push(
             `/workspaces/${workspaceId}/projects/${values.projectId}`

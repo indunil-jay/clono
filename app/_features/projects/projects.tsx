@@ -12,10 +12,12 @@ import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
 export const Projects = () => {
   const workspaceId = useWorkspaceId();
+
   const { data, status } = useGetProjectsByWorkspaceId({ workspaceId });
   const pathname = usePathname();
   const { open } = useCreateProjectModal();
 
+  if (!workspaceId) return null;
   if (status === "pending") return <SpinnerCircle />;
   if (status === "error") return "error";
 

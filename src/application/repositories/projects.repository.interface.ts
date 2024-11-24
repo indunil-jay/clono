@@ -1,25 +1,27 @@
 import {
+  ProjectsCollectionDocument,
   ProjectsCollectionInput,
   ProjectsCollectionUpdateInput,
-  ProjectseCollectionDocument,
 } from "@/src/entities/project.entity";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
 export interface IProjectRepository {
-  create: (
-    data: ProjectsCollectionInput
-  ) => Promise<ProjectseCollectionDocument>;
+  create(data: ProjectsCollectionInput): Promise<ProjectsCollectionDocument>;
 
-  getAllByWorkspaceId: (
+  getAllByWorkspaceId(
     workspaceId: string
-  ) => Promise<DocumentList<ProjectseCollectionDocument>>;
+  ): Promise<DocumentList<ProjectsCollectionDocument>>;
 
-  getById: (projectId: string) => Promise<ProjectseCollectionDocument>;
+  getById(projectId: string): Promise<ProjectsCollectionDocument>;
 
-  update: (
+  update(
     projectId: string,
     projectObj: ProjectsCollectionUpdateInput
-  ) => Promise<ProjectseCollectionDocument>;
+  ): Promise<ProjectsCollectionDocument>;
 
-  delete: (projectId: string) => Promise<void>;
+  delete(projectId: string): Promise<void>;
+
+  getAllByIds(
+    projectIds: string[]
+  ): Promise<DocumentList<ProjectsCollectionDocument>>;
 }

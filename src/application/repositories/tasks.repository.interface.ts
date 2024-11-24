@@ -1,9 +1,24 @@
-import { TasksCollectionDocument } from "@/src/entities/task.entity";
+import {
+  TasksCollectionDocument,
+  TasksCollectionInput,
+  TasksQuery,
+} from "@/src/entities/task.entity";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
 export interface ITasksRepository {
   getWorkspaceTasks(
     workspaceId: string,
-    filter?: string[]
+    filter?: {
+      query?: Omit<TasksQuery, "workspaceId">;
+      limit?: number;
+      orderAsc?: keyof TasksQuery | "position";
+      orderDesc?: keyof TasksQuery | "position";
+    }
   ): Promise<DocumentList<TasksCollectionDocument>>;
+
+  create(taskObj: TasksCollectionInput): Promise<TasksCollectionDocument>;
+
+  getById(taskId: string): Promise<TasksCollectionDocument>;
+
+  delete(taskId: string): Promise<void>;
 }

@@ -1,6 +1,5 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Task } from "./types";
 import { Button } from "@/app/_components/ui/button";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { ProjectAvatar } from "../projects/project-avatar";
@@ -9,8 +8,49 @@ import { TaskDate } from "./task-date";
 import { Badge } from "@/app/_components/ui/badge";
 import { snakeCaseToTitleCase } from "./utils";
 import { TaskActions } from "./task-actions";
+import { Checkbox } from "@/app/_components/ui/checkbox";
+import { TaskStatus } from "@/src/entities/task.enums";
 
-export const columns: ColumnDef<Task>[] = [
+export type TaskTableColums = {
+  id: string;
+  name: string;
+  project: {
+    projectId: string;
+    name: string;
+    imageUrl: string | undefined;
+  };
+  assignee: {
+    assigneeId: string;
+    name: string;
+    email: string;
+  };
+  dueDate: string;
+  status: TaskStatus;
+};
+
+export const columns: ColumnDef<TaskTableColums>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -26,7 +66,7 @@ export const columns: ColumnDef<Task>[] = [
     },
     cell: ({ row }) => {
       const name = row.original.name;
-      return <p className=" line-clamp-1">{name}</p>;
+      return <p className="line-clamp-1 text-left font-semibold">{name}</p>;
     },
   },
 
@@ -48,11 +88,11 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">
           <ProjectAvatar
-            className="size-6"
+            className="size-7 rounded-full"
             name={project.name}
             image={project.imageUrl}
           />
-          <p className="line-clamp-1">{project.name}</p>
+          <p className="line-clamp-1 text-left font-normal">{project.name}</p>
         </div>
       );
     },
@@ -74,13 +114,18 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const assignee = row.original.assignee;
       return (
-        <div className="flex items-center gap-x-2 text-sm font-medium">
+        <div className="flex items-center gap-x-2.5 text-sm font-medium">
           <MemberAvatar
-            className="size-6"
+            className="size-7 "
             fallbackClassName="text-xs"
             name={assignee.name}
           />
-          <p className="line-clamp-1">{assignee.name}</p>
+          <div className="flex flex-col">
+            <p className="line-clamp-1 text-sm font-normal">{assignee.name}</p>
+            <p className="line-clamp-1 text-xs text-muted-foreground font-normal">
+              {assignee.email}
+            </p>
+          </div>
         </div>
       );
     },
@@ -125,11 +170,10 @@ export const columns: ColumnDef<Task>[] = [
   },
 
   {
-    accessorKey: "actions",
-
+    id: "actions",
     cell: ({ row }) => {
-      const id = row.original.$id;
-      const projectId = row.original.projectId;
+      const id = row.original.id;
+      const projectId = row.original.project.projectId;
       return (
         <TaskActions id={id} projectId={projectId}>
           <Button variant={"ghost"} className="size-8 p-0">
@@ -138,5 +182,7 @@ export const columns: ColumnDef<Task>[] = [
         </TaskActions>
       );
     },
+    enableSorting: false,
+    enableHiding: false,
   },
 ];

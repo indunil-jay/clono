@@ -4,15 +4,25 @@ import { createSessionClient } from "@/src/lib/appwrite/appwrite";
 
 import { IProjectRepository } from "@/src/application/repositories/projects.repository.interface";
 import {
+  ProjectsCollectionDocument,
   ProjectsCollectionInput,
   ProjectsCollectionUpdateInput,
-  ProjectseCollectionDocument,
 } from "@/src/entities/project.entity";
 import { DATABASE_ID, PROJECTS_COLLECTION_ID } from "@/src/lib/constants";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()
 export class ProjectRepository implements IProjectRepository {
+  public async getAllByIds(
+    projectIds: string[]
+  ): Promise<DocumentList<ProjectsCollectionDocument>> {
+    const { databases } = await createSessionClient();
+
+    return await databases.listDocuments(DATABASE_ID, PROJECTS_COLLECTION_ID, [
+      Query.contains("$id", projectIds),
+    ]);
+  }
+
   public async delete(projectId: string): Promise<void> {
     const { databases } = await createSessionClient();
     await databases.deleteDocument(
@@ -25,7 +35,7 @@ export class ProjectRepository implements IProjectRepository {
   public async update(
     projectId: string,
     projectObj: ProjectsCollectionUpdateInput
-  ): Promise<ProjectseCollectionDocument> {
+  ): Promise<ProjectsCollectionDocument> {
     const { databases } = await createSessionClient();
     return await databases.updateDocument(
       DATABASE_ID,
@@ -35,9 +45,7 @@ export class ProjectRepository implements IProjectRepository {
     );
   }
 
-  public async getById(
-    projectId: string
-  ): Promise<ProjectseCollectionDocument> {
+  public async getById(projectId: string): Promise<ProjectsCollectionDocument> {
     const { databases } = await createSessionClient();
     return await databases.getDocument(
       DATABASE_ID,
@@ -48,7 +56,7 @@ export class ProjectRepository implements IProjectRepository {
 
   public async getAllByWorkspaceId(
     workspaceId: string
-  ): Promise<DocumentList<ProjectseCollectionDocument>> {
+  ): Promise<DocumentList<ProjectsCollectionDocument>> {
     const { databases } = await createSessionClient();
 
     return await databases.listDocuments(DATABASE_ID, PROJECTS_COLLECTION_ID, [
@@ -59,7 +67,7 @@ export class ProjectRepository implements IProjectRepository {
 
   public async create(
     data: ProjectsCollectionInput
-  ): Promise<ProjectseCollectionDocument> {
+  ): Promise<ProjectsCollectionDocument> {
     const { databases } = await createSessionClient();
 
     return await databases.createDocument(

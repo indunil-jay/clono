@@ -10,3 +10,5 @@ export const createTaskFormSchema = z.object({
   assigneeId: z.string().min(1, "Required"),
   description: z.string().optional(),
 });
+
+export type CreateTaskFromInput = z.infer<typeof createTaskFormSchema>;

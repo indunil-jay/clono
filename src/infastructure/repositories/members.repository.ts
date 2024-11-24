@@ -13,6 +13,15 @@ import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()
 export class MembersRepository implements IMembersRepository {
+  public async getAllMembersByIds(
+    userIds: string[]
+  ): Promise<DocumentList<MemberCollectionDocument>> {
+    const { databases } = await createSessionClient();
+    return await databases.listDocuments(DATABASE_ID, MEMBERS_COLLECTION_ID, [
+      Query.contains("userId", userIds),
+    ]);
+  }
+
   public async update(
     documentId: string,
     obj: MemberCollectionUpdateInput
