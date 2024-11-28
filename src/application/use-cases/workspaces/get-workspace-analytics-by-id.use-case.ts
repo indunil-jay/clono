@@ -1,6 +1,6 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { TaskStatus } from "@/src/entities/task.enums";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 export const getWorkspaceAnalyticsByIdUseCase = async (workspaceId: string) => {

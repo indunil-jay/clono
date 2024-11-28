@@ -1,6 +1,6 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { CreateTaskFromInput } from "@/src/interface-adapter/validation-schemas/task";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 import { Query } from "node-appwrite";
 
 export const createTaskUseCase = async (data: CreateTaskFromInput) => {

@@ -1,4 +1,4 @@
-import { IProjectRepository } from "./../src/application/repositories/projects.repository.interface";
+import { IProjectRepository } from "../../application/repositories/projects.repository.interface";
 import { IMembersRepository } from "@/src/application/repositories/members.repository.interface";
 import { ITasksRepository } from "@/src/application/repositories/tasks.repository.interface";
 import { IWorkspacesRepository } from "@/src/application/repositories/workspaces.repository.interface";

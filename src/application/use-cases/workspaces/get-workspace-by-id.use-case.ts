@@ -1,4 +1,4 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 
 export const getWorkspaceByIdUseCase = async (workspaceId: string) => {
   const workspacesRepository = getInjection("IWorkspacesRepository");

@@ -7,8 +7,8 @@ import {
   MemberCollectionInput,
   MemberCollectionUpdateInput,
 } from "@/src/entities/member.entity";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
-import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
+import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/tools/lib/constants";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()

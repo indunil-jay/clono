@@ -1,7 +1,7 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { MemberRole } from "@/src/entities/member.enum";
 import { UpdateWorkspaceFormInput } from "@/src/interface-adapter/validation-schemas/workspace";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 export const updateWorkspaceUseCase = async (
   inputData: UpdateWorkspaceFormInput,

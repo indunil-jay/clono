@@ -1,13 +1,13 @@
 import { Container } from "inversify";
 
-import { DI_RETURN_TYPES, DI_SYMBOLS } from "@/DI/types";
+import { DI_RETURN_TYPES, DI_SYMBOLS } from "@/src/tools/DI/types";
 
-import { AuthenticationModule } from "@/DI/modules/authentication.module";
-import { StorageModule } from "@/DI/modules/storage.module";
-import { WorkspacesModule } from "@/DI/modules/workspaces.module";
-import { MembersModule } from "@/DI/modules/members.module";
-import { TasksModule } from "@/DI/modules/tasks.module";
-import { ProjectsModule } from "@/DI/modules/projects.module";
+import { AuthenticationModule } from "@/src/tools/DI/modules/authentication.module";
+import { StorageModule } from "@/src/tools/DI/modules/storage.module";
+import { WorkspacesModule } from "@/src/tools/DI/modules/workspaces.module";
+import { MembersModule } from "@/src/tools/DI/modules/members.module";
+import { TasksModule } from "@/src/tools/DI/modules/tasks.module";
+import { ProjectsModule } from "@/src/tools/DI/modules/projects.module";
 
 const ApplicationContainer = new Container({
   defaultScope: "Singleton",

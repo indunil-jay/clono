@@ -12,7 +12,7 @@ import {
   Models,
 } from "node-appwrite";
 
-import { AUTH_COOKIE } from "@/src/lib/constants";
+import { AUTH_COOKIE } from "@/src/tools/lib/constants";
 
 type AdditionalContext = {
   Variables: {

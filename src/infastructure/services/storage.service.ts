@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
 import { ID } from "node-appwrite";
 import { IStorageService } from "@/src/application/services/storage-service.interface";
-import { IMAGE_BUCKET_ID } from "@/src/lib/constants";
+import { IMAGE_BUCKET_ID } from "@/src/tools/lib/constants";
 import { Context } from "hono";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 //TODO:error handle  when workspace delete image should delete
 

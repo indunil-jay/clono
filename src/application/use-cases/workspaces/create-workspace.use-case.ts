@@ -1,7 +1,7 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { CreateWorkspaceFormInput } from "@/src/interface-adapter/validation-schemas/workspace";
-import { generateInviteCode } from "@/src/lib/generate-invite-code";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { generateInviteCode } from "@/src/tools/lib/generate-invite-code";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 import { MemberRole } from "@/src/entities/member.enum";
 
 export const createWorkspaceUseCase = async (

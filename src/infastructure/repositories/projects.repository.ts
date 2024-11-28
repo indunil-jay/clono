@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { ID, Query } from "node-appwrite";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 import { IProjectRepository } from "@/src/application/repositories/projects.repository.interface";
 import {
@@ -8,7 +8,7 @@ import {
   ProjectsCollectionInput,
   ProjectsCollectionUpdateInput,
 } from "@/src/entities/project.entity";
-import { DATABASE_ID, PROJECTS_COLLECTION_ID } from "@/src/lib/constants";
+import { DATABASE_ID, PROJECTS_COLLECTION_ID } from "@/src/tools/lib/constants";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
 @injectable()

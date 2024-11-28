@@ -1,8 +1,8 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import {
   createAdminClient,
   createSessionClient,
-} from "@/src/lib/appwrite/appwrite";
+} from "@/src/tools/lib/appwrite/appwrite";
 
 export const getTaskUseCase = async (taskId: string) => {
   const tasksRepository = getInjection("ITasksRepository");

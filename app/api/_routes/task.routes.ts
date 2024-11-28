@@ -1,4 +1,4 @@
-import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
+import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import {
   MEMBERS_COLLECTION_ID,
   PROJECTS_COLLECTION_ID,
   TASKS_COLLECTION_ID,
-} from "@/src/lib/constants";
+} from "@/src/tools/lib/constants";
 import { ID, Query } from "node-appwrite";
 import { Task, TaskStatus } from "@/app/_features/tasks/types";
 import { getMember } from "@/app/_features/members/utils";

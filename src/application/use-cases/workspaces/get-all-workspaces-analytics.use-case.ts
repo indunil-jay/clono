@@ -1,7 +1,7 @@
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 import { getAllWorkspacesWithCurrentUserUseCase } from "./get-all-workspaces-by-user.use-case";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { MemberRole } from "@/src/entities/member.enum";
 
 export const getAllWorkspacesAnallticsUseCase = async () => {

@@ -1,5 +1,5 @@
-import { getInjection } from "@/DI/container";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { getInjection } from "@/src/tools/DI/container";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 export const deleteMemberInWorkspaceUseCase = async (
   memberId: string,

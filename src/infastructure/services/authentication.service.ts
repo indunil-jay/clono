@@ -9,8 +9,8 @@ import {
   SignInFormInput,
   SignUpFormInput,
 } from "@/src/interface-adapter/validation-schemas/auth";
-import { createAdminClient } from "@/src/lib/appwrite/appwrite";
-import { AUTH_COOKIE } from "@/src/lib/constants";
+import { createAdminClient } from "@/src/tools/lib/appwrite/appwrite";
+import { AUTH_COOKIE } from "@/src/tools/lib/constants";
 
 @injectable()
 export class AuthenticationService implements IAuthenticationService {

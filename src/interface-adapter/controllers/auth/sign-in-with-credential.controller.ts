@@ -3,7 +3,7 @@ import {
   SignInFormInput,
   signInFormSchema,
 } from "@/src/interface-adapter/validation-schemas/auth";
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 
 export const signInWithCredentialsController = async (
   input: SignInFormInput,

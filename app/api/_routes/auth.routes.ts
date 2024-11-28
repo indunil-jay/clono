@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
-import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
+import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import {
   signInFormSchema,
   signUpFormSchema,

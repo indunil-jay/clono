@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
+import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import { getAllMembersInWorkspaceController } from "@/src/interface-adapter/controllers/members/get-all-members-in-workspace.controller";
 import { deleteMemberInWorkspaceController } from "@/src/interface-adapter/controllers/members/delete-member-in-workspace.controller";
 import { updateWorkspaceMemberRoleController } from "@/src/interface-adapter/controllers/members/update-member-role-in-workspace.controller";

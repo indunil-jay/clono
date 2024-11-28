@@ -2,14 +2,14 @@ import { injectable } from "inversify";
 import { ID, Query } from "node-appwrite";
 
 import { IWorkspacesRepository } from "@/src/application/repositories/workspaces.repository.interface";
-import { DATABASE_ID, WORKSPACE_COLLECTION_ID } from "@/src/lib/constants";
+import { DATABASE_ID, WORKSPACE_COLLECTION_ID } from "@/src/tools/lib/constants";
 import {
   DocumentList,
   WorkspaceCollectionDocument,
   WorkspacesCollectionInput,
   WorkspacesCollectionUpdateInput,
 } from "@/src/entities/workspace.entity";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 @injectable()
 export class WorkspacesRepository implements IWorkspacesRepository {

@@ -8,8 +8,8 @@ import {
   TasksQuery,
 } from "@/src/entities/task.entity";
 import { DocumentList } from "@/src/entities/workspace.entity";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
-import { DATABASE_ID, TASKS_COLLECTION_ID } from "@/src/lib/constants";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
+import { DATABASE_ID, TASKS_COLLECTION_ID } from "@/src/tools/lib/constants";
 
 @injectable()
 export class TasksRepository implements ITasksRepository {

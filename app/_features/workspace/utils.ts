@@ -2,11 +2,11 @@ import {
   DATABASE_ID,
   MEMBERS_COLLECTION_ID,
   WORKSPACE_COLLECTION_ID,
-} from "@/src/lib/constants";
+} from "@/src/tools/lib/constants";
 
 import { Query } from "node-appwrite";
 import { getMember } from "../members/utils";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 export const getCurrentWorkspace = async () => {
   //TODO: proper error handle

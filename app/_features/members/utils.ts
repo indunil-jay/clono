@@ -1,4 +1,4 @@
-import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/lib/constants";
+import { DATABASE_ID, MEMBERS_COLLECTION_ID } from "@/src/tools/lib/constants";
 import { Query, type Databases } from "node-appwrite";
 
 interface IGetMember {

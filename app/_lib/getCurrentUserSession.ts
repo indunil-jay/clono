@@ -1,4 +1,4 @@
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 export const getCurrentUserSession = async () => {
   try {

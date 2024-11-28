@@ -1,6 +1,6 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { CreateProjectFromInput } from "@/src/interface-adapter/validation-schemas/project";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
 
 export const createProjectUseCase = async (data: CreateProjectFromInput) => {
   //memeber and admin both can create workspae,before all that, need to inside a workspace

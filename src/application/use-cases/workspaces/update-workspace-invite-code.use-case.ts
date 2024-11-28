@@ -1,7 +1,7 @@
-import { getInjection } from "@/DI/container";
+import { getInjection } from "@/src/tools/DI/container";
 import { MemberRole } from "@/src/entities/member.enum";
-import { createSessionClient } from "@/src/lib/appwrite/appwrite";
-import { generateInviteCode } from "@/src/lib/generate-invite-code";
+import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
+import { generateInviteCode } from "@/src/tools/lib/generate-invite-code";
 
 export const updateWorkspaceInviteCodeUseCase = async (workspaceId: string) => {
   //check if user is allow to update workspace.

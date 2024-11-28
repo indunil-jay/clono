@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
 
-import { sessionMiddleware } from "@/src/lib/appwrite/session-middleware";
+import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import { createProjectController } from "@/src/interface-adapter/controllers/projects/create-project.controller";
 import { getAllProjectsByWorkspaceIdController } from "@/src/interface-adapter/controllers/projects/get-all-projects-by-workspace-id.controller";
 import { updateProjectController } from "@/src/interface-adapter/controllers/projects/update-project.controller";
