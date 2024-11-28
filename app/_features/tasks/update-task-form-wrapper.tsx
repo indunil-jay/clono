@@ -1,10 +1,11 @@
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
-import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Loader } from "lucide-react";
-import { useGetTasksById } from "./hooks/use-get-task";
+
+import { Card, CardContent } from "@/app/_components/ui/card";
+
+import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
+import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { UpdateTaskForm } from "./update-task-form ";
+import { useGetTask } from "./hooks/use-get-task";
 
 interface UpdateTaskWrapperProps {
   onCancel: () => void;
@@ -14,37 +15,22 @@ interface UpdateTaskWrapperProps {
 export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
   const workspaceId = useWorkspaceId();
 
-  const { data: task, isLoading: isTaskLoading } = useGetTasksById({
+  const { data: task, status: TaskStatus } = useGetTask({
     taskId: id,
   });
 
-  const { data: projects, isLoading: isLoadingProjects } =
-    useGetProjectsByWorkspaceId({
-      workspaceId,
-    });
-  const { data: members, isLoading: isLoadingMembers } =
-    useGetMembersInWorkspace({
-      workspaceId,
-    });
+  const { data: members } = useGetMembersInWorkspace({
+    workspaceId,
+  });
 
-  const projectsOptions = projects?.data?.workspaceAllProjects.map(
-    (project) => ({
-      id: project.$id,
-      name: project.name,
-      imageUrl: project.imageUrl,
-    })
-  );
-  const membersOptions = members?.data.map((project) => ({
-    id: project.$id,
-    name: project.name,
+  const membersOptions = members?.data.map((member) => ({
+    id: member.$id,
+    name: member.name,
   }));
 
-  const isLoading = isLoadingMembers || isLoadingProjects || isTaskLoading;
-  if (!task) {
-    return null;
-  }
+  if (TaskStatus === "error") return "task Error";
 
-  if (isLoading) {
+  if (TaskStatus === "pending") {
     return (
       <Card className="w-full h-[714px] border-none shadow-none">
         <CardContent className="flex items-center justify-center h-full">
@@ -54,12 +40,20 @@ export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
     );
   }
 
+  const taskData = {
+    id: task.data.tasksCollectionDocument.$id,
+    name: task.data.tasksCollectionDocument.name,
+    dueDate: task.data.tasksCollectionDocument.dueDate,
+    status: task.data.tasksCollectionDocument.status,
+    description: task.data.tasksCollectionDocument.description,
+    assigneeId: task.data.tasksCollectionDocument.assigneeId,
+    projectId: task.data.tasksCollectionDocument.projectId,
+  };
   return (
     <UpdateTaskForm
       onCancle={onCancel}
-      projectOptions={projectsOptions ?? []}
       memberOptions={membersOptions ?? []}
-      task={task.data}
+      task={taskData}
     />
   );
 };

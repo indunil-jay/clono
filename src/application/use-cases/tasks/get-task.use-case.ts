@@ -39,8 +39,10 @@ export const getTaskUseCase = async (taskId: string) => {
   const assigneeDocuments = await users.get(tasksCollectionDocument.assigneeId);
 
   return {
+   usersCollectionDocument:{
     name: assigneeDocuments.name,
     email: assigneeDocuments.email,
+   },
     projectsCollectionDocument,
     tasksCollectionDocument,
   };

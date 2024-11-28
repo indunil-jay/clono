@@ -10,16 +10,18 @@ import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-wo
 import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Folder, ListCheckIcon, User } from "lucide-react";
-import { TaskStatus } from "./types";
-import { useTaskFilters } from "./hooks/useTaskFilters";
+import { useTaskFilters } from "./hooks/use-task-filters";
 import { DatePicker } from "@/app/_components/custom/date-picker";
+import { TaskStatus } from "@/src/entities/task.enums";
 
 interface DataFiltersProps {
   hideProjectFilter?: boolean;
 }
 
 export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
+  
   const workspaceId = useWorkspaceId();
+
   const { data: projects, isLoading: isLoadingProjects } =
     useGetProjectsByWorkspaceId({
       workspaceId,

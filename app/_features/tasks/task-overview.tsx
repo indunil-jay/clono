@@ -1,14 +1,13 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
-import { Task } from "./types";
 import { PencilIcon } from "lucide-react";
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { OverviewProperty } from "./overview-property";
 import { MemberAvatar } from "../members/member-avatar";
-import { TaskDate } from "./task-date";
+import { TaskDate } from "./kanban/task-date";
 import { Badge } from "@/app/_components/ui/badge";
 import { snakeCaseToTitleCase } from "./utils";
-import { useUpdateTaskModal } from "./hooks/useUpdateTaskModal";
+import { useUpdateTaskModal } from "./hooks/use-update-task-modal";
 
 interface TaskOverviewProps {
   task: any;
@@ -16,7 +15,6 @@ interface TaskOverviewProps {
 }
 
 export const TaskOverview = ({ task, name }: TaskOverviewProps) => {
-  console.log("TaskOverview", task);
   const { open } = useUpdateTaskModal();
   return (
     <div className="flex flex-col gap-y-4 col-span-1">

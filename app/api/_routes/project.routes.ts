@@ -37,9 +37,12 @@ const app = new Hono()
           200
         );
       } catch (error) {
+        const err = error as Error;
+
         return ctx.json(
+          
           {
-            message: "fail",
+            message: err.message,
             data: null,
           },
           400
@@ -74,12 +77,13 @@ const app = new Hono()
     const { projectId } = c.req.param();
 
     try {
-      const project = await getProjectController(projectId);
-
-      return c.json({ data: project, message: "success" }, 200);
+      const data = await getProjectController(projectId);
+      return c.json(data, 200);
     } catch (error) {
-      return c.json({ data: null, message: "fail" }, 400);
+      const err = error as Error;
+      return c.json({ message: err.message }, 400);
     }
+    
   })
 
   .delete("/:projectId", sessionMiddleware, async (ctx) => {

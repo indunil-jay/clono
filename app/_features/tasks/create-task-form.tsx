@@ -22,7 +22,6 @@ import { DottedSeparator } from "../../_components/custom/dotted-separator";
 import { useRouter } from "next/navigation";
 import { cn } from "@/app/_lib/utils";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { createTaskSchema } from "./schemas";
 import { useCreateTask } from "./hooks/use-create-task";
 import { DatePicker } from "@/app/_components/custom/date-picker";
 import {
@@ -33,8 +32,9 @@ import {
   SelectValue,
 } from "@/app/_components/ui/select";
 import { MemberAvatar } from "../members/member-avatar";
-import { TaskStatus } from "./types";
 import { ProjectAvatar } from "../projects/project-avatar";
+import { TaskStatus } from "@/src/entities/task.enums";
+import { createTaskFormSchema } from "@/src/interface-adapter/validation-schemas/task";
 
 interface CreateTasksFormProps {
   onCancle?: () => void;
@@ -50,8 +50,8 @@ export const CreateTaskForm = ({
   const { mutate, isPending } = useCreateTask();
   const workspaceId = useWorkspaceId();
 
-  const form = useForm<z.infer<typeof createTaskSchema>>({
-    resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
+  const form = useForm<z.infer<typeof createTaskFormSchema>>({
+    resolver: zodResolver(createTaskFormSchema.omit({ workspaceId: true })),
     defaultValues: {
       name: "",
       workspaceId,
@@ -60,7 +60,7 @@ export const CreateTaskForm = ({
 
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+  const onSubmit = (values: z.infer<typeof createTaskFormSchema>) => {
     mutate(
       { json: { ...values, workspaceId } },
       {

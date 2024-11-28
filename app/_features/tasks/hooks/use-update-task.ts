@@ -1,9 +1,8 @@
-"use client";
 import { InferRequestType, InferResponseType } from "hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { client } from "@/app/_lib/honojs/rpc";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)[":taskId"]["$patch"],
@@ -16,26 +15,26 @@ type RequestType = InferRequestType<
 export const useUpdateTask = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const router = useRouter();
-
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
-      // Ensure this method returns a valid JSON response
       const response = await client.api.tasks[":taskId"]["$patch"]({
         json,
         param,
       });
-      return await response.json(); // Adjust if needed
+
+      if (!response.ok) {
+        throw new Error("Task update error");
+      }
+
+      return await response.json();
     },
-    mutationKey: ["task"],
-    onSuccess: async ({ data }) => {
+
+    onSuccess: async () => {
       toast({
         title: "tasks updated",
       });
-      router.refresh;
-      // Invalidate the taskss query to refetch data
       return await queryClient.invalidateQueries({
-        queryKey: ["tasks", "task", data.$id],
+        queryKey: ["tasks"],
       });
     },
     onError: () => {

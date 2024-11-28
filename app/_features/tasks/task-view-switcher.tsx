@@ -1,4 +1,7 @@
 "use client";
+import { Loader, PlusCircle } from "lucide-react";
+import { useQueryState } from "nuqs";
+
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -7,119 +10,33 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/_components/ui/tabs";
-import { Loader, PlusCircle } from "lucide-react";
+import { DataFilters } from "./data-filters";
+
 import { useCreateTaskModal } from "./hooks/use-create-task-modal";
 import { useGetTasks } from "./hooks/use-get-tasks";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { useQueryState } from "nuqs";
-import { DataFilters } from "./data-filters";
-import { useTaskFilters } from "./hooks/useTaskFilters";
-import { DataTable } from "./data-table";
-import { columns, TaskTableColums } from "./columns";
-import { DataKanban } from "./data-kanban";
-import { useCallback } from "react";
-import { TaskStatus } from "./types";
-import { useUpdateBulkTasks } from "./hooks/useUpdatebulkTasks";
-import { DataCalendar } from "./data-calendar";
-import "./data-calendar.css";
-import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
+import { useTaskFilters } from "./hooks/use-task-filters";
+import "./calendar/data-calendar.css";
+import { DataTable } from "@/app/(dashboard)/workspaces/[workspaceId]/_components/data-table";
+import { columns } from "@/app/(dashboard)/workspaces/[workspaceId]/_components/columns";
 
 interface TaskViewSwitcherProps {
+  workspaceId:string;
   hideProjectFilter?: boolean;
+  projectId?:string
 }
 
-// export const sampleTaskTableData: TaskTableColums[] = [
-//   {
-//     id: "1",
-//     name: "Design homepage",
-//     project: {
-//       name: "Website Redesign",
-//       imageUrl: "https://via.placeholder.com/150",
-//       projectId: "1",
-//     },
-//     assignee: {
-//       name: "Alice Johnson",
-//       email: "alice.johnson@example.com",
-//     },
-//     dueDate: "2024-12-01",
-//     status: "in progress",
-//   },
-//   {
-//     id: "2",
-//     name: "Develop login feature",
-//     project: {
-//       name: "Mobile App",
-//       imageUrl: "https://via.placeholder.com/150",
-//       projectId: "1",
-//     },
-//     assignee: {
-//       name: "Bob Smith",
-//       email: "bob.smith@example.com",
-//     },
-//     dueDate: "2024-12-05",
-//     status: "todo",
-//   },
-//   {
-//     id: "3",
-//     name: "Prepare project report",
-//     project: {
-//       name: "Quarterly Review",
-//       imageUrl: "https://via.placeholder.com/150",
-//       projectId: "1",
-//     },
-//     assignee: {
-//       name: "Charlie Davis",
-//       email: "charlie.davis@example.com",
-//     },
-//     dueDate: "2024-11-28",
-//     status: "in review",
-//   },
-//   {
-//     id: "4",
-//     name: "Fix authentication bug",
-//     project: {
-//       name: "Backend Maintenance",
-//       imageUrl: "https://via.placeholder.com/150",
-//       projectId: "1",
-//     },
-//     assignee: {
-//       name: "Diana Torres",
-//       email: "diana.torres@example.com",
-//     },
-//     dueDate: "2024-11-30",
-//     status: "done",
-//   },
-//   {
-//     id: "5",
-//     name: "Create onboarding documentation",
-//     project: {
-//       name: "HR System",
-//       imageUrl: "https://via.placeholder.com/150",
-//       projectId: "1",
-//     },
-//     assignee: {
-//       name: "Ethan Brown",
-//       email: "ethan.brown@example.com",
-//     },
-//     dueDate: "2024-12-03",
-//     status: "todo",
-//   },
-// ];
-
 export const TaskViewSwitcher = ({
-  hideProjectFilter,
+  hideProjectFilter,workspaceId,projectId
 }: TaskViewSwitcherProps) => {
+
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
   });
-  const [{ status, search, assigneeId, projectId, dueDate }, setFilters] =
+
+  const [{ status, search, assigneeId, projectId:queryProjectId, dueDate }, ] =
     useTaskFilters();
-
-  const { open } = useCreateTaskModal();
-
-  const workspaceId = useWorkspaceId();
-
-  const {
+    
+    const {
     data: tasks,
     isLoading,
     isError,
@@ -128,17 +45,22 @@ export const TaskViewSwitcher = ({
     status,
     search,
     assigneeId,
-    projectId,
+    projectId:projectId || queryProjectId,
     dueDate,
   });
 
-  const { mutate } = useUpdateBulkTasks();
-  const onKanbanChange = useCallback(
-    (tasks: { $id: string; status: TaskStatus; position: number }[]) => {
-      mutate({ json: { tasks } });
-    },
-    [mutate]
-  );
+    const { open } = useCreateTaskModal();
+
+  // const { mutate } = useUpdateBulkTasks();
+
+  // const onKanbanChange = useCallback(
+  //   (tasks: { $id: string; status: TaskStatus; position: number }[]) => {
+  //     mutate({ json: { tasks } });
+  //   },
+  //   [mutate]
+  // );
+
+  
 
   if (isError) return "Error task list loading";
 
@@ -180,7 +102,7 @@ export const TaskViewSwitcher = ({
         ) : (
           <>
             <TabsContent value="table" className="mt-0">
-              <DataTable columns={columns} data={tasks?.data! ?? []} />
+              <DataTable columns={columns} data={tasks?.data ?? []} />
             </TabsContent>
 
             {/* <TabsContent value="kanban" className="mt-0">

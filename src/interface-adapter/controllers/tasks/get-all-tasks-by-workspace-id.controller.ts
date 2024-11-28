@@ -11,14 +11,15 @@ const presenter = (collectionDocumentList: CollectionDocumentListType) => {
       id: document.$id,
       name: document.name,
       project: {
-        projectId: document.project.$id,
+        id: document.project.$id,
         name: document.project.name,
         imageUrl: document.project.imageUrl,
       },
       assignee: {
-        assigneeId: document.assignee.$id,
+        id: document.assignee.$id,
         name: document.assignee.name,
         email: document.assignee.email,
+      
       },
       dueDate: document.dueDate,
       status: document.status,

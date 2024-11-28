@@ -1,6 +1,9 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { cn } from "@/app/_lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Form,
   FormControl,
@@ -8,21 +11,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../_components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../_components/ui/input";
-import { Button } from "../../_components/ui/button";
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
+import { Button } from "@/app/_components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { DottedSeparator } from "../../_components/custom/dotted-separator";
-import { useRouter } from "next/navigation";
-import { cn } from "@/app/_lib/utils";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { createTaskSchema } from "./schemas";
+} from "@/app/_components/ui/card";
+import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
 import { DatePicker } from "@/app/_components/custom/date-picker";
 import {
   Select,
@@ -31,14 +29,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
-import { MemberAvatar } from "../members/member-avatar";
-import { Task, TaskStatus } from "./types";
-import { ProjectAvatar } from "../projects/project-avatar";
-import { useUpdateTask } from "./hooks/useUpdateTask";
+
+import { MemberAvatar } from "@/app/_features/members/member-avatar";
+import { useUpdateTask } from "@/app/_features/tasks/hooks/use-update-task";
+import { TaskStatus } from "@/src/entities/task.enums";
+import { updateTaskFromSchema } from "@/src/interface-adapter/validation-schemas/task";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
+
+interface Task {
+  id: string;
+  name: string;
+  dueDate: string;
+  status: TaskStatus;
+  assigneeId: string;
+  projectId: string;
+  description?: string;
+}
 
 interface UpdateTaskFormProps {
   onCancle?: () => void;
-  projectOptions: { id: string; name: string; imageUrl: string }[];
   memberOptions: { id: string; name: string }[];
   task: Task;
 }
@@ -46,38 +55,29 @@ interface UpdateTaskFormProps {
 export const UpdateTaskForm = ({
   onCancle,
   memberOptions,
-  projectOptions,
   task,
 }: UpdateTaskFormProps) => {
   const { mutate, isPending } = useUpdateTask();
-  const workspaceId = useWorkspaceId();
 
-  const form = useForm<z.infer<typeof createTaskSchema>>({
-    resolver: zodResolver(
-      createTaskSchema.omit({ workspaceId: true, description: true })
-    ),
+  const form = useForm<z.infer<typeof updateTaskFromSchema>>({
+    resolver: zodResolver(updateTaskFromSchema),
     defaultValues: {
       ...task,
       dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
     },
   });
 
-  const router = useRouter();
-
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+  const onSubmit = async (values: z.infer<typeof updateTaskFromSchema>) => {
     mutate(
-      { json: values, param: { taskId: task.$id } },
+      { json: values, param: { taskId: task.id } },
       {
-        onSuccess: ({ data }) => {
-          console.log({ data });
-          form.reset();
-          router.push(
-            `/workspaces/${workspaceId}/projects/${values.projectId}`
-          );
+        onSuccess: () => {
+          onCancle?.();
         },
       }
     );
   };
+
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
@@ -197,44 +197,6 @@ export const UpdateTaskForm = ({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="projectId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project</FormLabel>
-
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {projectOptions.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
-                            <div className="flex items-center gap-x-2">
-                              <ProjectAvatar
-                                className="size-6"
-                                name={project.name}
-                                image={project.imageUrl}
-                              />
-
-                              {project.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
             <DottedSeparator className="py-7" />
 
@@ -245,11 +207,25 @@ export const UpdateTaskForm = ({
                 variant={"secondary"}
                 disabled={isPending}
                 className={cn(!onCancle && "invisible")}
+                onClick={onCancle}
               >
                 Cancel
               </Button>
-              <Button type="submit" size={"lg"} disabled={isPending}>
-                Save Changes
+              <Button
+                type="submit"
+                size={"lg"}
+                disabled={!form.formState.isDirty || isPending}
+              >
+                {isPending ? (
+                  <span className=" flex items-center gap-2">
+                    <span>Saving Changes</span>
+                    <span>
+                      <SpinnerCircle />
+                    </span>
+                  </span>
+                ) : (
+                  <span>Save Changes</span>
+                )}
               </Button>
             </div>
           </form>

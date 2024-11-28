@@ -1,42 +1,39 @@
 "use client";
 
-import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
 import { useGetTasks } from "@/app/_features/tasks/hooks/use-get-tasks";
-import { AnalyticsCard } from "./projects/[projectId]/client";
-import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
-import { DataTable } from "@/app/_features/tasks/data-table";
-import { columns } from "@/app/_features/tasks/columns";
-import { PageLoader } from "@/app/_features/tasks/pag-loader";
-import { DataFilters } from "@/app/_features/tasks/data-filters";
-import { useGetWorkspaceAnalyitics } from "@/app/_features/workspace/hooks/useGetWorkspaceAnalyitics";
-import { useGetProjectsByWorkspaceId } from "@/app/_features/projects/hooks/use-get-projetcts-by-workspace-id";
-import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
-import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
+import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { DataFilter } from "./_components/data-filter";
+import { Spinner } from "@/app/_components/custom/spinner";
+
+// import { DataTable } from "@/app/_features/tasks/table/data-table";
+// import { DataFilters } from "@/app/_features/tasks/data-filters";
+// import { columns } from "@/app/_features/tasks/table/columns";
 
 export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
   const { data: tasks, status } = useGetTasks({
     workspaceId,
   });
 
-  const { data: analytics, status: analticsStatus } = useGetWorkspaceAnalyitics(
-    {
-      workspaceId,
-    }
-  );
+  // const { data: analytics, status: analticsStatus } = useGetWorkspaceAnalyitics(
+  //   {
+  //     workspaceId,
+  //   }
+  // );
 
-  const { data: projects, status: projectStatus } = useGetProjectsByWorkspaceId(
-    {
-      workspaceId,
-    }
-  );
+  // const { data: projects, status: projectStatus } = useGetProjectsByWorkspaceId(
+  //   {
+  //     workspaceId,
+  //   }
+  // );
 
-  const { data: members, isLoading: isLoadingMembers } =
-    useGetMembersInWorkspace({
-      workspaceId,
-    });
+  // const { data: members, isLoading: isLoadingMembers } =
+  //   useGetMembersInWorkspace({
+  //     workspaceId,
+  //   });
 
-  if (status === "pending") return <PageLoader />;
+  if (status === "pending") return <Spinner />;
   if (status === "error") return "error in all task list";
 
   return (
@@ -108,14 +105,10 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
 
       <Card>
         <CardHeader>
-          <DataFilters />
+          <DataFilter />
         </CardHeader>
         <CardContent>
-          <DataTable
-            key={"all-tasks-table"}
-            columns={columns}
-            data={tasks?.data! ?? []}
-          />
+          <DataTable data={tasks.data ?? []} columns={columns}/>
         </CardContent>
       </Card>
     </div>

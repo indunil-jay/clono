@@ -1,15 +1,14 @@
 import { cn } from "@/app/_lib/utils";
-import { Project } from "../projects/types";
-import { TaskStatus } from "./types";
 import { MemberAvatar } from "../members/member-avatar";
 import { ProjectAvatar } from "../projects/project-avatar";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { useRouter } from "next/navigation";
+import { TaskStatus } from "@/src/entities/task.enums";
 
 interface EventCardProps {
   title: string;
   assignee: any;
-  project: Project;
+  project: any;
   status: TaskStatus;
   id: string;
 }

@@ -1,6 +1,7 @@
 import { client } from "@/app/_lib/honojs/rpc";
+import { TaskStatus } from "@/src/entities/task.enums";
 import { useQuery } from "@tanstack/react-query";
-import { TaskStatus } from "../types";
+
 
 interface UseGetProjectsProps {
   workspaceId: string;
@@ -19,15 +20,18 @@ export const useGetTasks = ({
   dueDate,
   search,
 }: UseGetProjectsProps) => {
+
   const query = useQuery({
     queryKey: [
       "tasks",
+      {
       workspaceId,
       projectId,
       status,
       assigneeId,
       dueDate,
       search,
+      }
     ],
     queryFn: async () => {
       const response = await client.api.tasks.$get({

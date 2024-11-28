@@ -1,6 +1,6 @@
 import { getCurrentUserSession } from "@/app/_lib/getCurrentUserSession";
 import { redirect } from "next/navigation";
-import { ProjectClient } from "./client";
+import { ProjectDetails } from "./_components/project-details";
 
 export default async function Page({
   params,
@@ -12,5 +12,5 @@ export default async function Page({
 
   if (!user) redirect("/sign-in");
 
-  return <ProjectClient projectId={projectId} />;
+  return <ProjectDetails projectId={projectId} />;
 }

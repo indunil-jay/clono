@@ -42,7 +42,6 @@ export class AuthenticationService implements IAuthenticationService {
     inputData: SignInFormInput,
     ctx: Context
   ): Promise<void> {
-    try {
       const { account } = await createAdminClient();
       const session = await account.createEmailPasswordSession(
         inputData.email,
@@ -56,16 +55,12 @@ export class AuthenticationService implements IAuthenticationService {
         sameSite: "strict",
         maxAge: 60 * 60 * 24 * 30,
       });
-    } catch (error) {
-      throw new Error(
-        "Invalid credentials. Please check the email and password"
-      );
-    }
+    
   }
 
-  public async signWithProviders() {
-    const { account } = await createAdminClient();
-  }
+  // public async signWithProviders() {
+  //   const { account } = await createAdminClient();
+  // }
 
   public async signOut(ctx: Context): Promise<void> {
     const account = ctx.get("account");
@@ -83,7 +78,8 @@ export class AuthenticationService implements IAuthenticationService {
         ID.unique(),
         inputData.email,
         inputData.password,
-        inputData.username
+        inputData.username,
+        // inputData.imageUrl
       );
     } catch (error) {
       const errorMsg = error as Error;

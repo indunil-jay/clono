@@ -1,7 +1,7 @@
 "use client";
-import { ResponsiveModal } from "../../_components/custom/responsive-modal";
-import { UpdateTaskWrapper } from "./update-task-form-wrapper";
-import { useUpdateTaskModal } from "./hooks/useUpdateTaskModal";
+import { ResponsiveModal } from "@/app/_components/custom/responsive-modal";
+import { UpdateTaskWrapper } from "@/app/_features/tasks/update-task-form-wrapper";
+import { useUpdateTaskModal } from "@/app/_features/tasks/hooks/use-update-task-modal";
 
 export const UpdeteTaskModal = () => {
   const { close, taskId } = useUpdateTaskModal();

@@ -1,8 +1,11 @@
 "use client";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { ArrowLeft, ImageIcon } from "lucide-react";
 
 import {
   Form,
@@ -12,7 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-
 import { Input } from "@/app/_components/ui/input";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -22,37 +24,35 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
-
 import { Avatar, AvatarFallback } from "@/app/_components/ui/avatar";
-import Image from "next/image";
-import { ArrowLeft, ImageIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useUpdateProject } from "./hooks/use-update-project";
-import { updateProjectSchemaForm } from "./schema";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
-import { useDeleteProject } from "./hooks/use-delete-project";
-import { Project } from "./types";
 import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 
+import { useUpdateProject } from "./hooks/use-update-project";
+import { useDeleteProject } from "./hooks/use-delete-project";
+import { updateProjectFormSchema } from "@/src/interface-adapter/validation-schemas/project";
+import { useGetProject } from "./hooks/use-get-project";
+
 interface UpdateProjectFormProps {
-  onCancle?: () => void;
-  initialValues: Project;
+  projectId:string
 }
 
 export const UpdateProjectForm = ({
-  onCancle,
-  initialValues,
-}: UpdateProjectFormProps) => {
-  const { mutate, isPending } = useUpdateProject();
+projectId
 
-  const form = useForm<z.infer<typeof updateProjectSchemaForm>>({
-    resolver: zodResolver(updateProjectSchemaForm),
+}: UpdateProjectFormProps) => {
+
+  const {data:initialValues} = useGetProject({projectId})
+  
+  const form = useForm<z.infer<typeof updateProjectFormSchema>>({
+    resolver: zodResolver(updateProjectFormSchema),
     defaultValues: {
       ...initialValues,
-      image: initialValues.imageUrl ?? "",
+      image: initialValues?.imageUrl ?? "",
     },
   });
-
+  
+  const { mutate, isPending } = useUpdateProject();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -64,13 +64,13 @@ export const UpdateProjectForm = ({
     }
   };
 
-  const onSubmit = (values: z.infer<typeof updateProjectSchemaForm>) => {
+  const onSubmit = (values: z.infer<typeof updateProjectFormSchema>) => {
     const formData = {
       ...values,
       image: values.image instanceof File ? values.image : "",
     };
     mutate(
-      { form: formData, param: { projectId: initialValues.$id } },
+      { form: formData, param: { projectId } },
       {
         onSuccess: ({ data }) => {
           form.reset();
@@ -93,10 +93,10 @@ export const UpdateProjectForm = ({
     const ok = await confirmDelete();
     if (!ok) return;
     deleteProject(
-      { param: { projectId: initialValues.$id } },
+      { param: { projectId } },
       {
         onSuccess: () => {
-          return router.push(`/workspaces/${initialValues.workspaceId}`);
+          return router.push(`/workspaces/${initialValues?.workspaceId}`);
         },
       }
     );
@@ -110,12 +110,12 @@ export const UpdateProjectForm = ({
           <Button
             size={"sm"}
             variant={"secondary"}
-            onClick={onCancle ? onCancle : () => router.back()}
+            onClick={()=>router.back()}
           >
             <ArrowLeft className="size-4 mr-1" />
             Back
           </Button>
-          <CardTitle>{initialValues.name}</CardTitle>
+          <CardTitle>{initialValues?.name}</CardTitle>
         </CardHeader>
         <div className="px-7">
           <DottedSeparator />
@@ -251,7 +251,7 @@ export const UpdateProjectForm = ({
               size={"sm"}
               variant={"destructive"}
               type="button"
-              // disabled={isDeletingWorkspace}
+              disabled={isDeletingProjects}
               onClick={handleDelete}
             >
               Delete Workspace

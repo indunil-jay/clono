@@ -1,6 +1,7 @@
 "use client";
 
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
 import { Button } from "@/app/_components/ui/button";
 import {
   CardHeader,
@@ -19,11 +20,13 @@ import Link from "next/link";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 
 export const ProjectClient = ({ projectId }: { projectId: string }) => {
-  const { data, isPending } = useGetProject({ projectId });
+  const { data:project, status } = useGetProject({ projectId });
 
-  if (isPending) return "loading project";
+  if(status==="pending") return <SpinnerCircle/>
 
-  const project = data?.data!;
+  if(status==="error") return "project error"
+
+
   return (
     <div className="flex flex-col gap-y-4 ">
       <div className="flex items-center justify-between">
@@ -39,7 +42,7 @@ export const ProjectClient = ({ projectId }: { projectId: string }) => {
         <div>
           <Button variant={"secondary"} asChild size={"sm"}>
             <Link
-              href={`/workspaces/${project.workspaceId}/projects/${project.$id}/settings`}
+              href={`/workspaces/${project.workspaceId}/projects/${project.id}/settings`}
             >
               Edit Project
               <Pencil />

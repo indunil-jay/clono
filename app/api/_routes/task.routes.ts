@@ -4,25 +4,23 @@ import { Hono } from "hono";
 import { z } from "zod";
 import {
   DATABASE_ID,
-  MEMBERS_COLLECTION_ID,
-  PROJECTS_COLLECTION_ID,
   TASKS_COLLECTION_ID,
 } from "@/src/tools/lib/constants";
-import { ID, Query } from "node-appwrite";
-import { Task, TaskStatus } from "@/app/_features/tasks/types";
+import {  Query } from "node-appwrite";
 import { getMember } from "@/app/_features/members/utils";
-import { createTaskSchema } from "@/app/_features/tasks/schemas";
 import { createTaskController } from "@/src/interface-adapter/controllers/tasks/create-task.controller";
 import { deleteTaskController } from "@/src/interface-adapter/controllers/tasks/delete-task.controller";
 import { getTaskController } from "@/src/interface-adapter/controllers/tasks/get-task.controller";
 import { taskQuerySchema } from "@/src/entities/task.entity";
 import { getAllTasksByWorkspacceIdController } from "@/src/interface-adapter/controllers/tasks/get-all-tasks-by-workspace-id.controller";
+import { TaskStatus } from "@/src/entities/task.enums";
+import { createTaskFormSchema } from "@/src/interface-adapter/validation-schemas/task";
 
 const app = new Hono()
   .post(
     "/",
     sessionMiddleware,
-    zValidator("json", createTaskSchema),
+    zValidator("json", createTaskFormSchema),
     async (c) => {
       const {
         name,
@@ -45,7 +43,7 @@ const app = new Hono()
           description,
         });
         return c.json({ data: task });
-      } catch (error) {
+      } catch  {
         //TODO:error response
       }
     }
@@ -73,26 +71,54 @@ const app = new Hono()
     }
   })
 
+   //filter
+   .get(
+    "/",
+    sessionMiddleware,
+    zValidator("query", taskQuerySchema),
+    async (ctx) => {
+      const { workspaceId, projectId, search, status, assigneeId, dueDate } =
+        ctx.req.valid("query");
+
+      try {
+        const data = await getAllTasksByWorkspacceIdController({
+          workspaceId,
+          projectId,
+          search,
+          status,
+          assigneeId,
+          dueDate,
+        });
+
+        return ctx.json({data} ,200);
+      } catch(err)  {
+        const error = err as Error
+
+        return ctx.json({message:error.message, data:null},400);
+      }
+    }
+  )
+
+
   .patch(
     "/:taskId",
     sessionMiddleware,
-    zValidator("json", createTaskSchema.partial()),
+    zValidator("json", createTaskFormSchema.partial()),
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
       const {
         name,
-        workspaceId,
         status,
         projectId,
         assigneeId,
         dueDate,
         description,
       } = c.req.valid("json");
-
+console.log("insidE api")
       const { taskId } = c.req.param();
 
-      const existingTask = await databases.getDocument<Task>(
+      const existingTask = await databases.getDocument(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         taskId
@@ -125,33 +151,6 @@ const app = new Hono()
       return c.json({ data: task });
     }
   )
-
-  //filter
-  .get(
-    "/",
-    sessionMiddleware,
-    zValidator("query", taskQuerySchema),
-    async (ctx) => {
-      const { workspaceId, projectId, search, status, assigneeId, dueDate } =
-        ctx.req.valid("query");
-
-      try {
-        const data = await getAllTasksByWorkspacceIdController({
-          workspaceId,
-          projectId,
-          search,
-          status,
-          assigneeId,
-          dueDate,
-        });
-
-        return ctx.json({ data, message: "success" });
-      } catch (error) {
-        return ctx.json({ data: null, message: "success" });
-      }
-    }
-  )
-
   //this is for updating kanban board
   .post(
     "/bulk-updates",
@@ -173,7 +172,7 @@ const app = new Hono()
       const { tasks } = c.req.valid("json");
       const user = c.get("user");
 
-      const tasksToUpdates = await databases.listDocuments<Task>(
+      const tasksToUpdates = await databases.listDocuments(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         [
@@ -207,7 +206,7 @@ const app = new Hono()
       const updatedTasks = await Promise.all(
         tasks.map(async (task) => {
           const { $id, status, position } = task;
-          return databases.updateDocument<Task>(
+          return databases.updateDocument(
             DATABASE_ID,
             TASKS_COLLECTION_ID,
             $id,

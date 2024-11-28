@@ -1,7 +1,7 @@
 "use client";
 
+import { TaskStatus } from "@/src/entities/task.enums";
 import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
-import { TaskStatus } from "../types";
 
 export const useTaskFilters = () => {
   return useQueryStates({

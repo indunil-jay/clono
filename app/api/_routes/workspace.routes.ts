@@ -7,10 +7,8 @@ import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import {
   TASKS_COLLECTION_ID,
   DATABASE_ID,
-  WORKSPACE_COLLECTION_ID,
 } from "@/src/tools/lib/constants";
 import { getMember } from "@/app/_features/members/utils";
-import { TaskStatus } from "@/app/_features/tasks/types";
 
 import { getAllWorkspacesWithCurrentUserController } from "@/src/interface-adapter/controllers/workspaces/get-all-workspaces.controller";
 import { updateWorkspaceController } from "@/src/interface-adapter/controllers/workspaces/update-workspace.controller";
@@ -24,6 +22,7 @@ import {
   updateWorkspaceFormSchema,
 } from "@/src/interface-adapter/validation-schemas/workspace";
 import { getWorkspaceInfoByIdController } from "@/src/interface-adapter/controllers/workspaces/get-workspace-info-by-id.controller";
+import { TaskStatus } from "@/src/entities/task.enums";
 
 const app = new Hono()
   .post(
@@ -39,6 +38,7 @@ const app = new Hono()
         });
         return ctx.json({ status: "success", data: { workspaceId } }, 200);
       } catch (error) {
+        console.log(error)
         return ctx.json({ status: "fail", data: null }, 400);
       }
     }
@@ -48,6 +48,8 @@ const app = new Hono()
       const data = await getAllWorkspacesWithCurrentUserController();
       return ctx.json({ status: "success", data }, 200);
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ status: "fail", data: null }, 400);
     }
   })
@@ -69,6 +71,8 @@ const app = new Hono()
           200
         );
       } catch (error) {
+        console.log(error)
+
         return ctx.json({ status: "fail" }, 400);
       }
     }
@@ -79,6 +83,8 @@ const app = new Hono()
       await deleteWorkspaceController(workspaceId);
       return ctx.json({ data: { workspaceId } });
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ status: "fail" }, 400);
     }
   })
@@ -90,6 +96,8 @@ const app = new Hono()
       );
       return ctx.json({ status: "success", data: workspaceData }, 200);
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ status: "fail" }, 400);
     }
   })
@@ -103,6 +111,8 @@ const app = new Hono()
       );
       return ctx.json({ status: "success", data: workspaceData });
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ status: "fail", data: null });
     }
   })
@@ -113,6 +123,8 @@ const app = new Hono()
       const workspaceInfo = await getWorkspaceInfoByIdController(workspaceId);
       return ctx.json({ message: "success", data: workspaceInfo });
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ message: "fail", data: null });
     }
   })
@@ -123,6 +135,8 @@ const app = new Hono()
       const data = await getAllWorkspacesAnallticsController();
       return ctx.json({ status: "success", data }, 200);
     } catch (error) {
+      console.log(error)
+
       return ctx.json({ status: "fail" }, 400);
     }
   })

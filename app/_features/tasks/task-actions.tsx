@@ -5,12 +5,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
-import { ExternalLinkIcon, Pencil, PencilIcon, Trash } from "lucide-react";
+import { ExternalLinkIcon, PencilIcon, Trash } from "lucide-react";
 import { useDeleteTask } from "./hooks/use-delete-task";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { useUpdateTaskModal } from "./hooks/useUpdateTaskModal";
+import { useUpdateTaskModal } from "./hooks/use-update-task-modal";
 
 interface TaskActionsProps {
   id: string;
@@ -53,6 +53,7 @@ export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-48">
+
           <DropdownMenuItem
             onClick={onOpenTask}
             className="font-medium p-[10px]"
@@ -75,6 +76,7 @@ export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
             <ExternalLinkIcon className="size-4 mr-2 stroke-2" />
             Open Project
           </DropdownMenuItem>
+          
           <DropdownMenuItem
             onClick={onDelete}
             disabled={isDeletingTask}
@@ -83,6 +85,7 @@ export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
             <Trash className="size-4 mr-2 stroke-2 text-red-600" />
             Delete Task
           </DropdownMenuItem>
+          
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -1,8 +1,6 @@
 "use client";
 import Link from "next/link";
 import { ProjectAvatar } from "../projects/project-avatar";
-import { Project } from "../projects/types";
-import { Task } from "./types";
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { ChevronRightIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
@@ -10,12 +8,9 @@ import { useDeleteTask } from "./hooks/use-delete-task";
 import { useConfirmModal } from "@/app/_components/custom/use-confirm-modal";
 import { useRouter } from "next/navigation";
 
-interface TaskBreadcrumbsProps {
-  project: Project;
-  task: Task;
-}
 
-export const TaskBreadcrumbs = ({ project, task }: TaskBreadcrumbsProps) => {
+
+export const TaskBreadcrumbs = ({ project, task }: any) => {
   const workspaceId = useWorkspaceId();
   const { mutate, isPending } = useDeleteTask();
   const router = useRouter();

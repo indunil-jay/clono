@@ -1,9 +1,11 @@
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-workspace";
-import { useGetProjectsByWorkspaceId } from "../projects/hooks/use-get-projetcts-by-workspace-id";
-import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { Loader } from "lucide-react";
-import { CreateTaskForm } from "./create-task-form";
+
+import { Card, CardContent } from "@/app/_components/ui/card";
+import { CreateTaskForm } from "@/app/_features/tasks/create-task-form";
+
+import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
+import { useGetProjectsByWorkspaceId } from "@/app/_features/projects/hooks/use-get-projetcts-by-workspace-id";
+import { useWorkspaceId } from "@/app/_features/workspace/hooks/useWorkspaceId";
 
 interface CreateTaskFormWrapperProps {
   onCancel: () => void;
