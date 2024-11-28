@@ -2,11 +2,8 @@ import { sessionMiddleware } from "@/src/tools/lib/appwrite/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
-import {
-  DATABASE_ID,
-  TASKS_COLLECTION_ID,
-} from "@/src/tools/lib/constants";
-import {  Query } from "node-appwrite";
+import { DATABASE_ID, TASKS_COLLECTION_ID } from "@/src/tools/lib/constants";
+import { Query } from "node-appwrite";
 import { getMember } from "@/app/_features/members/utils";
 import { createTaskController } from "@/src/interface-adapter/controllers/tasks/create-task.controller";
 import { deleteTaskController } from "@/src/interface-adapter/controllers/tasks/delete-task.controller";
@@ -43,7 +40,7 @@ const app = new Hono()
           description,
         });
         return c.json({ data: task });
-      } catch  {
+      } catch {
         //TODO:error response
       }
     }
@@ -71,15 +68,14 @@ const app = new Hono()
     }
   })
 
-   //filter
-   .get(
+  //filter
+  .get(
     "/",
     sessionMiddleware,
     zValidator("query", taskQuerySchema),
     async (ctx) => {
       const { workspaceId, projectId, search, status, assigneeId, dueDate } =
         ctx.req.valid("query");
-
       try {
         const data = await getAllTasksByWorkspacceIdController({
           workspaceId,
@@ -89,16 +85,14 @@ const app = new Hono()
           assigneeId,
           dueDate,
         });
+        return ctx.json({ data }, 200);
+      } catch (err) {
+        const error = err as Error;
 
-        return ctx.json({data} ,200);
-      } catch(err)  {
-        const error = err as Error
-
-        return ctx.json({message:error.message, data:null},400);
+        return ctx.json({ message: error.message, data: [] }, 400);
       }
     }
   )
-
 
   .patch(
     "/:taskId",
@@ -107,15 +101,9 @@ const app = new Hono()
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
-      const {
-        name,
-        status,
-        projectId,
-        assigneeId,
-        dueDate,
-        description,
-      } = c.req.valid("json");
-console.log("insidE api")
+      const { name, status, projectId, assigneeId, dueDate, description } =
+        c.req.valid("json");
+      console.log("insidE api");
       const { taskId } = c.req.param();
 
       const existingTask = await databases.getDocument(
@@ -151,6 +139,7 @@ console.log("insidE api")
       return c.json({ data: task });
     }
   )
+
   //this is for updating kanban board
   .post(
     "/bulk-updates",

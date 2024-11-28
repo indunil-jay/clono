@@ -37,7 +37,7 @@ import { useUpdateInviteCodeWorkspace } from "@/app/_features/workspace/hooks/us
 import { useUpdateWorkspace } from "@/app/_features/workspace/hooks/use-update-workspace";
 import { useDeleteWorkspace } from "@/app/_features/workspace/hooks/use-delete-workspace";
 import { useCurrent } from "../auth/hooks/use-current";
-import { useGetWorkspacesInfo } from "./hooks/useGetWorkspaceInfo";
+import { useGetWorkspacesInfo } from "./hooks/use-get-workspace-Info";
 import { useWorkspaceId } from "./hooks/useWorkspaceId";
 
 interface UpdateWorkspaceFormProps {

@@ -24,7 +24,7 @@ export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
   });
 
   const membersOptions = members?.data.map((member) => ({
-    id: member.$id,
+    id: member.userId,
     name: member.name,
   }));
 

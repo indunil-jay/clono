@@ -29,7 +29,7 @@ import { useCurrent } from "@/app/_features/auth/hooks/use-current";
 import { useUpdateWorkspaceMemberRole } from "@/app/_features/members/hooks/use-update-workspace-member-role";
 
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
-import { useGetWorkspacesInfo } from "../workspace/hooks/useGetWorkspaceInfo";
+import { useGetWorkspacesInfo } from "../workspace/hooks/use-get-workspace-Info";
 
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();

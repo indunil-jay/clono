@@ -29,13 +29,13 @@ export const getAllTasksByWorkspaceIdControllerUseCase = async (
     { query }
   );
 
-  // console.log(tasksCollectionDocumentList);
+  // console.log(tasksCollectionDocumentList.total);
 
   if (!(tasksCollectionDocumentList.documents.length > 0)) {
     //not a error this case
     return;
   }
-
+  // console.log(tasksCollectionDocumentList);
   //if there is a document , then below are exists
 
   //selects projects details

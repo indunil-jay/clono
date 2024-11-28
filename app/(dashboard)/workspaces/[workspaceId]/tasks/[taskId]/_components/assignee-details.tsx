@@ -35,29 +35,29 @@ import {
 import { MemberAvatar } from "@/app/_features/members/member-avatar";
 import { TaskStatus } from "@/src/entities/task.enums";
 import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
-import { Spinner } from "@/app/_components/custom/spinner";
-import { useGetTask } from "@/app/_features/tasks/hooks/use-get-task";
 
 interface AssigneeDetailsProps {
-  taskId: string;
   workspaceId: string;
+  task: {
+    assigneeId: string;
+    status: TaskStatus;
+    email: string;
+    workspaceId: string;
+    workspaceName: string;
+    isAdmin: boolean;
+  };
 }
 
-export const AssigneeDetails = ({
-  taskId,
-  workspaceId,
-}: AssigneeDetailsProps) => {
-  const { data, isLoading } = useGetTask({ taskId });
+export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
+  const { data: members } = useGetMembersInWorkspace({
+    workspaceId: task.workspaceId,
+  });
+
   const form = useForm<z.infer<typeof updateTaskFromSchema>>({
     resolver: zodResolver(updateTaskFromSchema),
     defaultValues: {
-      assigneeId: data?.data.tasksCollectionDocument.assigneeId,
-      status: data?.data.tasksCollectionDocument.status,
+      ...task,
     },
-  });
-
-  const { data: members } = useGetMembersInWorkspace({
-    workspaceId,
   });
 
   const membersOptions = members?.data.map((member) => ({
@@ -65,12 +65,12 @@ export const AssigneeDetails = ({
     name: member.name,
   }));
 
-  const handleBlur = (
-    field: keyof typeof updateTaskFromSchema,
-    value: string | null
-  ) => {
-    console.log(value);
-  };
+  // const handleBlur = (
+  //   field: keyof typeof updateTaskFromSchema,
+  //   value: string | null
+  // ) => {
+  //   console.log(value);
+  // };
   return (
     <Card>
       <CardHeader>
@@ -99,10 +99,10 @@ export const AssigneeDetails = ({
                           <Select
                             defaultValue={field.value}
                             onValueChange={field.onChange}
+                            disabled={!task.isAdmin}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                {isLoading && <Spinner />}
                                 <SelectValue placeholder="Select assignee" />
                               </SelectTrigger>
                             </FormControl>
@@ -130,7 +130,7 @@ export const AssigneeDetails = ({
                     <div className="flex flex-col gap-y-3">
                       <Label>Assignee Email</Label>
                       <p className="text-muted-foreground text-sm">
-                        {data?.data.usersCollectionDocument.email}
+                        {task.email}
                       </p>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ export const AssigneeDetails = ({
                     <div className="flex flex-col gap-y-3">
                       <Label>Workspace Name</Label>
                       <p className="text-muted-foreground text-sm">
-                        test workspace -01
+                        {task.workspaceName}
                       </p>
                     </div>
                   </div>

@@ -12,6 +12,8 @@ import { Spinner } from "@/app/_components/custom/spinner";
 // import { columns } from "@/app/_features/tasks/table/columns";
 
 export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
+  console.log(workspaceId);
+
   const { data: tasks, status } = useGetTasks({
     workspaceId,
   });
@@ -108,7 +110,7 @@ export const WorkspaceIdClient = ({ workspaceId }: { workspaceId: string }) => {
           <DataFilter />
         </CardHeader>
         <CardContent>
-          <DataTable data={tasks.data ?? []} columns={columns}/>
+          <DataTable data={tasks.data ?? []} columns={columns} />
         </CardContent>
       </Card>
     </div>

@@ -20,36 +20,38 @@ import { DataTable } from "@/app/(dashboard)/workspaces/[workspaceId]/_component
 import { columns } from "@/app/(dashboard)/workspaces/[workspaceId]/_components/columns";
 
 interface TaskViewSwitcherProps {
-  workspaceId:string;
+  workspaceId: string;
   hideProjectFilter?: boolean;
-  projectId?:string
+  projectId?: string;
 }
 
 export const TaskViewSwitcher = ({
-  hideProjectFilter,workspaceId,projectId
+  hideProjectFilter,
+  workspaceId,
+  projectId,
 }: TaskViewSwitcherProps) => {
-
   const [view, setView] = useQueryState("task-view", {
     defaultValue: "table",
   });
 
-  const [{ status, search, assigneeId, projectId:queryProjectId, dueDate }, ] =
+  const [{ status, search, assigneeId, projectId: queryProjectId, dueDate }] =
     useTaskFilters();
-    
-    const {
+
+  const {
     data: tasks,
     isLoading,
     isError,
+    error,
   } = useGetTasks({
     workspaceId,
     status,
     search,
     assigneeId,
-    projectId:projectId || queryProjectId,
+    projectId: projectId || queryProjectId,
     dueDate,
   });
 
-    const { open } = useCreateTaskModal();
+  const { open } = useCreateTaskModal();
 
   // const { mutate } = useUpdateBulkTasks();
 
@@ -60,9 +62,7 @@ export const TaskViewSwitcher = ({
   //   [mutate]
   // );
 
-  
-
-  if (isError) return "Error task list loading";
+  if (isError) return `Error task list loading ${error.message}`;
 
   return (
     <Tabs

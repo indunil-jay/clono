@@ -6,25 +6,29 @@ export type CollectionDocumentListType = Awaited<
 >;
 
 const presenter = (collectionDocumentList: CollectionDocumentListType) => {
-  return collectionDocumentList?.map((document) => {
-    return {
-      id: document.$id,
-      name: document.name,
-      project: {
-        id: document.project.$id,
-        name: document.project.name,
-        imageUrl: document.project.imageUrl,
-      },
-      assignee: {
-        id: document.assignee.$id,
-        name: document.assignee.name,
-        email: document.assignee.email,
-      
-      },
-      dueDate: document.dueDate,
-      status: document.status,
-    };
-  });
+  return collectionDocumentList
+    ? collectionDocumentList.map((document) => {
+        return {
+          id: document.$id,
+          name: document.name,
+          project: {
+            id: document.project.$id,
+            name: document.project.name,
+            imageUrl: document.project.imageUrl,
+          },
+          assignee: {
+            id: document.assigneeId,
+            name: document.assignee.name,
+            email: document.assignee.email,
+          },
+          dueDate: document.dueDate,
+          status: document.status,
+          description: document.description,
+          assigneeComment: document.assigneeComment,
+          reviewerComment: document.reviewerComment,
+        };
+      })
+    : [];
 };
 export type getAllTasksByWorkspacceIdControllerResponse = ReturnType<
   typeof presenter

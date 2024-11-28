@@ -22,7 +22,7 @@ import {
 } from "@/app/_components/ui/form";
 import { Textarea } from "@/app/_components/ui/textarea";
 import { useUpdateTask } from "@/app/_features/tasks/hooks/use-update-task";
-import { useGetTasksById } from "@/app/_features/tasks/hooks/use-get-task";
+import { cn } from "@/app/_lib/utils";
 
 type FieldKey = "description" | "userComment" | "reviewerComment";
 
@@ -53,8 +53,8 @@ interface DescriptionCardProps {
   fieldKey: FieldKey;
   readOnly: boolean;
   defaultValue?: string;
+  obj?: any;
 }
-
 /**
  *  we need disable task descripton and review filed  for member
  *  we need to diable Assignee comment for admin
@@ -103,7 +103,7 @@ export const DescriptionCard = ({
   }
 
   return (
-    <Card>
+    <Card className={cn(!readOnly && "bg-muted pointer-events-none")}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -113,7 +113,7 @@ export const DescriptionCard = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="bio"
+              name={fieldKey}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{label}</FormLabel>
@@ -130,7 +130,7 @@ export const DescriptionCard = ({
                 </FormItem>
               )}
             />
-            {!readOnly && <Button type="submit">Submit</Button>}
+            {readOnly && <Button type="submit">Submit</Button>}
           </form>
         </Form>
       </CardContent>
