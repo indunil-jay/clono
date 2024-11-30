@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
-import auth from "@/app/api/_routes/auth.routes";
-import workspaces from "@/app/api/_routes/workspace.routes";
-import members from "@/app/api/_routes/member.routes";
-import tasks from "@/app/api/_routes/task.routes";
-import projects from "@/app/api/_routes/project.routes";
+import auth from "@/src/interface-adapter/_routes/auth.routes";
+import workspaces from "@/src/interface-adapter/_routes/workspace.routes";
+import members from "@/src/interface-adapter/_routes/member.routes";
+import tasks from "@/src/interface-adapter/_routes/task.routes";
+import projects from "@/src/interface-adapter/_routes/project.routes";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 

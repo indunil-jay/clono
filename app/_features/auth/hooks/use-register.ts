@@ -1,9 +1,9 @@
 "use client";
+import { useRouter } from "next/navigation";
+import { InferRequestType, InferResponseType } from "hono";
 import { useMutation } from "@tanstack/react-query";
 import { client } from "@/app/_lib/honojs/rpc";
-import { InferRequestType, InferResponseType } from "hono";
 import { useToast } from "@/app/_hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
   (typeof client.api.auth)["sign-up"]["$post"]
@@ -29,17 +29,17 @@ export const useRegister = () => {
 
       return await response.json();
     },
-    onSuccess: (data, { json: { username } }) => {
+    onSuccess: (_, { json: { username } }) => {
       toast({
         title: "sign up successfull.",
-        description: `Welcome  ${username}`,
+        description: `welcome  ${username}`,
       });
       return router.push("/sign-in");
     },
     onError: (error) => {
       toast({
         title: "sign up failed.",
-        description: String(error.message),
+        description: error.message,
       });
     },
   });

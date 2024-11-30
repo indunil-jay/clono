@@ -10,31 +10,30 @@ import {
 import { signInWithCredentialsController } from "@/src/interface-adapter/controllers/auth/sign-in-with-credential.controller";
 import { signUpController } from "@/src/interface-adapter/controllers/auth/sign-up.controller";
 import { signOutController } from "@/src/interface-adapter/controllers/auth/sign-out.controller";
+import { Exception } from "@/src/entities/errors/common-errors";
 
 const app = new Hono()
-  .post("/sign-in", zValidator("json", signInFormSchema), async (ctx) => {
-    const requestBodyJSON = ctx.req.valid("json");
-    try {
-      await signInWithCredentialsController(requestBodyJSON, ctx);
-      return ctx.json({ success: true, message: "Login successful" }, 200);
-    } catch (error) {
-      const e = error as Error;
-      return ctx.json({ success: false, message: e.message }, 400);
-    }
-  })
   .post("/sign-up", zValidator("json", signUpFormSchema), async (ctx) => {
     const requestBodyJSON = ctx.req.valid("json");
     try {
       await signUpController(requestBodyJSON);
-      return ctx.json(
-        { success: true, message: "Registration successfull" },
-        200
-      );
-    } catch (error) {
-      const e = error as Error;
-      return ctx.json({ success: false, message: e.message }, 400);
+      return ctx.json({ message: "Registration successfull" }, 200);
+    } catch (e) {
+      const error = e as Exception;
+      return ctx.json({ message: error.message }, error.code);
     }
   })
+  .post("/sign-in", zValidator("json", signInFormSchema), async (ctx) => {
+    const requestBodyJSON = ctx.req.valid("json");
+    try {
+      await signInWithCredentialsController(requestBodyJSON, ctx);
+      return ctx.json({ message: "Login successful" }, 200);
+    } catch (e) {
+      const error = e as Exception;
+      return ctx.json({ message: error.message }, error.code);
+    }
+  })
+
   .post(
     "/sign-out",
     zValidator("json", z.object({})),
@@ -42,13 +41,10 @@ const app = new Hono()
     async (ctx) => {
       try {
         await signOutController(ctx);
-        return ctx.json(
-          { success: true, message: "sign out successfully" },
-          200
-        );
-      } catch (error) {
-        const e = error as Error;
-        return ctx.json({ success: false, message: e.message }, 400);
+        return ctx.json({ message: "sign out successfully" }, 200);
+      } catch (e) {
+        const error = e as Exception;
+        return ctx.json({ message: error.message }, error.code);
       }
     }
   )

@@ -1,9 +1,4 @@
-"use client";
 import Link from "next/link";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 import { DottedSeparator } from "@/app/_components/custom/dotted-separator";
@@ -15,35 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/_components/ui/card";
-import { Input } from "@/app/_components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/app/_components/ui/form";
-
-import { useRegister } from "@/app/_features/auth/hooks/use-register";
-import { signUpFormSchema } from "@/src/interface-adapter/validation-schemas/auth";
-import { redirect } from "next/navigation";
+import { SignUpForm } from "@/app/_features/auth/sign-up-form";
+import { FcGoogle } from "react-icons/fc";
 
 export const SingUpCard = () => {
-  const form = useForm<z.infer<typeof signUpFormSchema>>({
-    resolver: zodResolver(signUpFormSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-    },
-  });
-
-  const { mutate } = useRegister();
-
-  const onSubmit = (values: z.infer<typeof signUpFormSchema>) => {
-    mutate({ json: values });
-  };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
       <CardHeader className="flex items-center justify-center text-center p-7">
@@ -64,76 +34,7 @@ export const SingUpCard = () => {
       </div>
 
       <CardContent className="p-7 flex flex-col gap-y-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter your username</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="alex martin"
-                      disabled={false}
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter your email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="alexmartin@gmail.com"
-                      disabled={false}
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      disabled={false}
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              className="w-full"
-              type="submit"
-              disabled={false}
-              size={"lg"}
-            >
-              Register
-            </Button>
-          </form>
-        </Form>
+        <SignUpForm />
       </CardContent>
 
       <div className="px-7 ">
