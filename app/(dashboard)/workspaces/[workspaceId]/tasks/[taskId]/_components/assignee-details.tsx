@@ -1,9 +1,7 @@
-"use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
+import { useRef } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -23,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form";
-import { updateTaskFromSchema } from "@/src/interface-adapter/validation-schemas/task";
 import { Label } from "@/app/_components/ui/label";
 import {
   Select,
@@ -33,19 +30,32 @@ import {
   SelectValue,
 } from "@/app/_components/ui/select";
 import { MemberAvatar } from "@/app/_features/members/member-avatar";
-import { TaskStatus } from "@/src/entities/task.enums";
+import { ReviewStatus, TaskStatus } from "@/src/entities/task.enums";
 import { useGetMembersInWorkspace } from "@/app/_features/members/hooks/use-get-members-in-workspace";
+import { DatePicker } from "@/app/_components/custom/date-picker";
+import { useUpdateTask } from "@/app/_features/tasks/hooks/use-update-task";
+import { updateTaskFromSchema } from "@/src/interface-adapter/validation-schemas/task";
+
+export interface TaskDetails {
+  name?: string;
+  id: string;
+  assigneeId: string;
+  status: TaskStatus;
+  email: string;
+  workspaceId: string;
+  workspaceName: string;
+  dueDate: string;
+  isAdmin?: boolean;
+  sessionUserId?: string;
+  assigneeComment: string | undefined;
+  description: string | undefined;
+  reviewerComment: string | undefined;
+  reviewerStatus: ReviewStatus | undefined;
+}
 
 interface AssigneeDetailsProps {
   workspaceId: string;
-  task: {
-    assigneeId: string;
-    status: TaskStatus;
-    email: string;
-    workspaceId: string;
-    workspaceName: string;
-    isAdmin: boolean;
-  };
+  task: TaskDetails;
 }
 
 export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
@@ -56,7 +66,9 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
   const form = useForm<z.infer<typeof updateTaskFromSchema>>({
     resolver: zodResolver(updateTaskFromSchema),
     defaultValues: {
-      ...task,
+      assigneeId: task.assigneeId,
+      status: task.status as TaskStatus,
+      dueDate: new Date(task.dueDate),
     },
   });
 
@@ -65,12 +77,34 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
     name: member.name,
   }));
 
-  // const handleBlur = (
-  //   field: keyof typeof updateTaskFromSchema,
-  //   value: string | null
-  // ) => {
-  //   console.log(value);
-  // };
+  const { mutate, isPending } = useUpdateTask();
+
+  const previousValues = useRef<{
+    assigneeId: string;
+    status: TaskStatus;
+    dueDate: Date;
+  }>({
+    assigneeId: task.assigneeId,
+    status: task.status as TaskStatus,
+    dueDate: new Date(task.dueDate),
+  });
+
+  const handleBlur = (
+    field: keyof typeof previousValues.current,
+    value: (typeof previousValues.current)[keyof typeof previousValues.current]
+  ) => {
+    if (
+      field &&
+      value !== undefined &&
+      value !== previousValues.current[field]
+    ) {
+      mutate({ json: { [field]: value }, param: { taskId: task.id } });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      previousValues.current[field] = value;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -98,8 +132,15 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
 
                           <Select
                             defaultValue={field.value}
-                            onValueChange={field.onChange}
-                            disabled={!task.isAdmin}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              handleBlur("assigneeId", value);
+                            }}
+                            disabled={
+                              !task.isAdmin ||
+                              isPending ||
+                              task.reviewerStatus === ReviewStatus.ACCEPT
+                            }
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -114,7 +155,6 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
                                       className="size-6"
                                       name={member.name}
                                     />
-
                                     {member.name}
                                   </div>
                                 </SelectItem>
@@ -145,7 +185,16 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
 
                           <Select
                             defaultValue={field.value}
-                            onValueChange={field.onChange}
+                            onValueChange={(value: TaskStatus) => {
+                              field.onChange(value);
+                              handleBlur("status", value);
+                            }}
+                            disabled={
+                              (!task.isAdmin &&
+                                task.assigneeId !== task.sessionUserId) ||
+                              isPending ||
+                              task.reviewerStatus === ReviewStatus.ACCEPT
+                            }
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -154,20 +203,44 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
                             </FormControl>
 
                             <SelectContent>
-                              <SelectItem value={TaskStatus.BACKLOG}>
+                              <SelectItem
+                                disabled={
+                                  !task.isAdmin || !!task.assigneeComment
+                                }
+                                value={TaskStatus.BACKLOG}
+                              >
                                 backlog
                               </SelectItem>
 
-                              <SelectItem value={TaskStatus.IN_PROGRESS}>
+                              <SelectItem
+                                value={TaskStatus.IN_PROGRESS}
+                                disabled={!!task.assigneeComment}
+                              >
                                 in progress
                               </SelectItem>
-                              <SelectItem value={TaskStatus.IN_REVIEW}>
+                              <SelectItem
+                                value={TaskStatus.IN_REVIEW}
+                                disabled={
+                                  !task.isAdmin || !!task.assigneeComment
+                                }
+                              >
                                 in review
                               </SelectItem>
-                              <SelectItem value={TaskStatus.TODO}>
+
+                              <SelectItem
+                                value={TaskStatus.TODO}
+                                disabled={
+                                  !task.isAdmin || !!task.assigneeComment
+                                }
+                              >
                                 todo
                               </SelectItem>
-                              <SelectItem value={TaskStatus.DONE}>
+                              <SelectItem
+                                value={TaskStatus.DONE}
+                                disabled={
+                                  !task.isAdmin || !!task.assigneeComment
+                                }
+                              >
                                 done
                               </SelectItem>
                             </SelectContent>
@@ -185,6 +258,38 @@ export const AssigneeDetails = ({ task }: AssigneeDetailsProps) => {
                       </p>
                     </div>
                   </div>
+
+                  <FormField
+                    disabled={
+                      !task.isAdmin ||
+                      task.reviewerStatus === ReviewStatus.ACCEPT ||
+                      isPending
+                    }
+                    control={form.control}
+                    name="dueDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Due Date</FormLabel>
+                        <FormControl>
+                          <div
+                            tabIndex={1}
+                            onBlur={() => {
+                              if (field.value !== undefined) {
+                                handleBlur("dueDate", field.value);
+                              }
+                            }}
+                          >
+                            <DatePicker
+                              {...field}
+                              disabled={!task.isAdmin || isPending}
+                            />
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </form>
             </Form>

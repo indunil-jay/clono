@@ -1,9 +1,8 @@
 import { Models } from "node-appwrite";
 import { z } from "zod";
-import { TaskStatus } from "./task.enums";
-import { ReviewStatus } from "../interface-adapter/validation-schemas/task";
+import { ReviewStatus, TaskStatus } from "./task.enums";
 
-export const taskSchema = z.object({
+export const createTaskSchema = z.object({
   name: z.string(),
   projectId: z.string(),
   workspaceId: z.string(),
@@ -18,10 +17,10 @@ export const taskSchema = z.object({
   reviewStatus: z.nativeEnum(ReviewStatus),
 });
 
-export type TasksCollectionInput = z.infer<typeof taskSchema>;
+export type TasksCollectionInput = z.infer<typeof createTaskSchema>;
 
 export type TasksCollectionDocument = Models.Document &
-  z.infer<typeof taskSchema>;
+  z.infer<typeof createTaskSchema>;
 
 export const taskQuerySchema = z.object({
   workspaceId: z.string(),
@@ -33,3 +32,18 @@ export const taskQuerySchema = z.object({
 });
 
 export type TasksQuery = z.infer<typeof taskQuerySchema>;
+
+export const updateTaskExtendedFormSchema = createTaskSchema
+  .extend({
+    description: z.string().optional().nullable(),
+    reviewerComment: z.string().optional().nullable(),
+    assigneeComment: z.string().optional().nullable(),
+    reviewerId: z.string().min(1, "Required").optional().nullable(),
+    reviewStatus: z
+      .nativeEnum(ReviewStatus, { required_error: "Required" })
+      .optional()
+      .nullable(),
+  })
+  .partial();
+
+export type UpdateTaskFromInput = z.infer<typeof updateTaskExtendedFormSchema>;

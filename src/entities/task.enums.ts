@@ -5,3 +5,9 @@ export enum TaskStatus {
   IN_REVIEW = "IN_REVIEW",
   DONE = "DONE",
 }
+
+export enum ReviewStatus {
+  "ACCEPT" = "ACCEPT",
+  "DECLINE" = "DECLINE",
+  "NONE" = "NONE",
+}

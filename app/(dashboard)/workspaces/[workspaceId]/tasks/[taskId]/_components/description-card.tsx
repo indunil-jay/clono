@@ -1,6 +1,5 @@
 "use client";
 
-import { useToast } from "@/app/_hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -23,15 +22,18 @@ import {
 import { Textarea } from "@/app/_components/ui/textarea";
 import { useUpdateTask } from "@/app/_features/tasks/hooks/use-update-task";
 import { cn } from "@/app/_lib/utils";
+import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
+import { TaskDetails } from "./assignee-details";
+import { ReviewStatus, TaskStatus } from "@/src/entities/task.enums";
 
-type FieldKey = "description" | "userComment" | "reviewerComment";
+type FieldKey = "description" | "assigneeComment" | "reviewerComment";
 
 const baseSchema = z.object({
   description: z
     .string()
     .min(10, "Description must be at least 10 characters long.")
     .max(500, "Description cannot exceed 500 characters."),
-  userComment: z
+  assigneeComment: z
     .string()
     .min(5, "Comment must be at least 5 characters.")
     .max(300, "Comment cannot exceed 300 characters."),
@@ -53,14 +55,10 @@ interface DescriptionCardProps {
   fieldKey: FieldKey;
   readOnly: boolean;
   defaultValue?: string;
-  obj?: any;
+  task: TaskDetails;
 }
-/**
- *  we need disable task descripton and review filed  for member
- *  we need to diable Assignee comment for admin
- *  we need to disable all comments scetion, when admin is review the task,  if ok, if not  again task need to be update
- *
- */
+
+import { useState } from "react";
 
 export const DescriptionCard = ({
   title,
@@ -68,42 +66,48 @@ export const DescriptionCard = ({
   fieldKey,
   readOnly,
   defaultValue,
+  task,
 }: DescriptionCardProps) => {
-  const { toast } = useToast();
-  //   const {} = useGetTasksById({});
-
   const form = useForm({
     resolver: zodResolver(dynamicFormSchema(fieldKey)),
     defaultValues: { [fieldKey]: defaultValue || "" },
   });
 
-  const { mutate } = useUpdateTask();
+  const { mutate, isPending } = useUpdateTask();
+  const [action, setAction] = useState<"accept" | "reject" | null>(null);
 
   function onSubmit(data: { [key: string]: string }) {
-    mutate(
-      {
-        json: { [fieldKey]: data[fieldKey] },
-        param: { taskId: "someTaskId" },
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: "You submitted the following values:",
-            description: (
-              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <code className="text-white">
-                  {JSON.stringify(data, null, 2)}
-                </code>
-              </pre>
-            ),
-          });
+    if (fieldKey === "reviewerComment") {
+      mutate({
+        json: {
+          [fieldKey]: data[fieldKey],
+          reviewStatus:
+            action === "accept" ? ReviewStatus.ACCEPT : ReviewStatus.DECLINE,
         },
-      }
-    );
+        param: { taskId: task.id },
+      });
+    } else {
+      mutate({
+        json: { [fieldKey]: data[fieldKey] },
+        param: { taskId: task.id },
+      });
+    }
   }
 
   return (
-    <Card className={cn(!readOnly && "bg-muted pointer-events-none")}>
+    <Card
+      className={cn(
+        !readOnly && "bg-muted pointer-events-none",
+        task.reviewerStatus === ReviewStatus.DECLINE &&
+          fieldKey === "reviewerComment" &&
+          !task.isAdmin &&
+          "bg-red-200",
+        task.reviewerStatus === ReviewStatus.ACCEPT &&
+          fieldKey === "reviewerComment" &&
+          !task.isAdmin &&
+          "bg-green-200"
+      )}
+    >
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -119,18 +123,91 @@ export const DescriptionCard = ({
                   <FormLabel>{label}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Type your message here "
+                      placeholder="Type your message here"
                       className="resize-none"
                       {...field}
                       rows={5}
+                      disabled={
+                        task.reviewerStatus === ReviewStatus.ACCEPT ||
+                        (fieldKey === "reviewerComment" &&
+                          !task.assigneeComment)
+                      }
                     />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {readOnly && <Button type="submit">Submit</Button>}
+
+            {readOnly && task.reviewerStatus !== ReviewStatus.ACCEPT ? (
+              fieldKey === "reviewerComment" &&
+              task.status !== TaskStatus.DONE ? (
+                !form.formState.isDirty ? (
+                  <span className="text-muted-foreground text-xs my-2">
+                    {!task.assigneeComment && null}
+                    {(task.assigneeComment ||
+                      task.reviewerStatus === ReviewStatus.DECLINE) &&
+                      "Click start to edit"}
+                  </span>
+                ) : (
+                  <div className="flex gap-3">
+                    <Button
+                      disabled={!form.formState.isDirty}
+                      type="submit"
+                      onClick={() => setAction("accept")}
+                    >
+                      {isPending && action === "accept" ? (
+                        <span className="flex gap-2">
+                          <span>Accepting</span>
+                          <SpinnerCircle />
+                        </span>
+                      ) : (
+                        <span>Accept & Review</span>
+                      )}
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      disabled={!form.formState.isDirty}
+                      type="submit"
+                      onClick={() => setAction("reject")}
+                    >
+                      {isPending && action === "reject" ? (
+                        <span className="flex gap-2">
+                          <span>Rejecting</span>
+                          <SpinnerCircle />
+                        </span>
+                      ) : (
+                        <span>Reject & Review</span>
+                      )}
+                    </Button>
+                  </div>
+                )
+              ) : null
+            ) : null}
+
+            {readOnly &&
+            task.reviewerStatus !== ReviewStatus.ACCEPT &&
+            (fieldKey === "assigneeComment" || fieldKey === "description") ? (
+              task.status !== TaskStatus.DONE ? (
+                !form.formState.isDirty ? (
+                  <span className="text-muted-foreground text-xs my-2">
+                    Click start to edit
+                  </span>
+                ) : (
+                  <Button disabled={!form.formState.isDirty} type="submit">
+                    {isPending ? (
+                      <span className="flex gap-2">
+                        <span>Saving Changes</span>
+                        <SpinnerCircle />
+                      </span>
+                    ) : (
+                      <span>Save Changes</span>
+                    )}
+                  </Button>
+                )
+              ) : null
+            ) : null}
           </form>
         </Form>
       </CardContent>

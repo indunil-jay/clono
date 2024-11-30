@@ -32,24 +32,15 @@ import {
 
 import { MemberAvatar } from "@/app/_features/members/member-avatar";
 import { useUpdateTask } from "@/app/_features/tasks/hooks/use-update-task";
-import { TaskStatus } from "@/src/entities/task.enums";
+import { ReviewStatus, TaskStatus } from "@/src/entities/task.enums";
 import { updateTaskFromSchema } from "@/src/interface-adapter/validation-schemas/task";
 import { SpinnerCircle } from "@/app/_components/custom/spinner-circle";
-
-interface Task {
-  id: string;
-  name: string;
-  dueDate: string;
-  status: TaskStatus;
-  assigneeId: string;
-  projectId: string;
-  description?: string;
-}
+import { TaskDetails } from "@/app/(dashboard)/workspaces/[workspaceId]/tasks/[taskId]/_components/assignee-details";
 
 interface UpdateTaskFormProps {
   onCancle?: () => void;
   memberOptions: { id: string; name: string }[];
-  task: Task;
+  task: TaskDetails;
 }
 
 export const UpdateTaskForm = ({
@@ -100,7 +91,11 @@ export const UpdateTaskForm = ({
                       <Input
                         placeholder="Enter workspace name"
                         {...field}
-                        disabled={isPending}
+                        disabled={
+                          isPending ||
+                          !task.isAdmin ||
+                          task.reviewerStatus === ReviewStatus.ACCEPT
+                        }
                       />
                     </FormControl>
 
@@ -112,11 +107,23 @@ export const UpdateTaskForm = ({
               <FormField
                 control={form.control}
                 name="dueDate"
+                disabled={
+                  isPending ||
+                  !task.isAdmin ||
+                  task.reviewerStatus === ReviewStatus.ACCEPT
+                }
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Due Date</FormLabel>
                     <FormControl>
-                      <DatePicker {...field} />
+                      <DatePicker
+                        {...field}
+                        disabled={
+                          task.reviewerStatus === ReviewStatus.ACCEPT ||
+                          isPending ||
+                          !task.isAdmin
+                        }
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -134,6 +141,11 @@ export const UpdateTaskForm = ({
                     <Select
                       defaultValue={field.value}
                       onValueChange={field.onChange}
+                      disabled={
+                        isPending ||
+                        !task.isAdmin ||
+                        task.reviewerStatus === ReviewStatus.ACCEPT
+                      }
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -171,6 +183,11 @@ export const UpdateTaskForm = ({
                     <Select
                       defaultValue={field.value}
                       onValueChange={field.onChange}
+                      disabled={
+                        isPending ||
+                        !task.isAdmin ||
+                        task.reviewerStatus === ReviewStatus.ACCEPT
+                      }
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -178,18 +195,49 @@ export const UpdateTaskForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={TaskStatus.BACKLOG}>
+                        <SelectItem
+                          value={TaskStatus.BACKLOG}
+                          disabled={
+                            !task.isAdmin ||
+                            task.reviewerStatus === ReviewStatus.ACCEPT
+                          }
+                        >
                           backlog
                         </SelectItem>
 
-                        <SelectItem value={TaskStatus.IN_PROGRESS}>
+                        <SelectItem
+                          value={TaskStatus.IN_PROGRESS}
+                          disabled={task.reviewerStatus === ReviewStatus.ACCEPT}
+                        >
                           in progress
                         </SelectItem>
-                        <SelectItem value={TaskStatus.IN_REVIEW}>
+                        <SelectItem
+                          value={TaskStatus.IN_REVIEW}
+                          disabled={
+                            !task.isAdmin ||
+                            task.reviewerStatus === ReviewStatus.ACCEPT
+                          }
+                        >
                           in review
                         </SelectItem>
-                        <SelectItem value={TaskStatus.TODO}>todo</SelectItem>
-                        <SelectItem value={TaskStatus.DONE}>done</SelectItem>
+                        <SelectItem
+                          value={TaskStatus.TODO}
+                          disabled={
+                            !task.isAdmin ||
+                            task.reviewerStatus === ReviewStatus.ACCEPT
+                          }
+                        >
+                          todo
+                        </SelectItem>
+                        <SelectItem
+                          value={TaskStatus.DONE}
+                          disabled={
+                            !task.isAdmin ||
+                            task.reviewerStatus === ReviewStatus.ACCEPT
+                          }
+                        >
+                          done
+                        </SelectItem>
                       </SelectContent>
                     </Select>
 

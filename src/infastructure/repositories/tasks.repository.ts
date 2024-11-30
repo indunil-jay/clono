@@ -6,6 +6,7 @@ import {
   TasksCollectionDocument,
   TasksCollectionInput,
   TasksQuery,
+  UpdateTaskFromInput,
 } from "@/src/entities/task.entity";
 import { DocumentList } from "@/src/entities/workspace.entity";
 import { createSessionClient } from "@/src/tools/lib/appwrite/appwrite";
@@ -13,6 +14,20 @@ import { DATABASE_ID, TASKS_COLLECTION_ID } from "@/src/tools/lib/constants";
 
 @injectable()
 export class TasksRepository implements ITasksRepository {
+  public async update(
+    taskId: string,
+    taskObj: UpdateTaskFromInput
+  ): Promise<TasksCollectionDocument> {
+    const { databases } = await createSessionClient();
+
+    return await databases.updateDocument(
+      DATABASE_ID,
+      TASKS_COLLECTION_ID,
+      taskId,
+      taskObj
+    );
+  }
+
   public async delete(taskId: string): Promise<void> {
     const { databases } = await createSessionClient();
     await databases.deleteDocument(DATABASE_ID, TASKS_COLLECTION_ID, taskId);

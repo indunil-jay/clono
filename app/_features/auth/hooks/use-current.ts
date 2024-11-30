@@ -1,15 +1,6 @@
 "use client";
 import { client } from "@/app/_lib/honojs/rpc";
 import { useQuery } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
-
-// type ResponseType = InferResponseType<
-//   (typeof client.api.auth)["current"]["$get"],
-//   200
-// >;
-// type RequestType = InferRequestType<
-//   (typeof client.api.auth)["current"]["$get"]
-// >;
 
 export const useCurrent = () => {
   const query = useQuery({

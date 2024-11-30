@@ -29,12 +29,12 @@ export const useUpdateTask = () => {
       return await response.json();
     },
 
-    onSuccess: async () => {
+    onSuccess: async ({ data }) => {
       toast({
         title: "tasks updated",
       });
       return await queryClient.invalidateQueries({
-        queryKey: ["tasks"],
+        queryKey: ["tasks", data.$id],
       });
     },
     onError: () => {

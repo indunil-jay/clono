@@ -12,6 +12,7 @@ interface DatePickerProps {
   onChange: (date: Date) => void;
   className?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const DatePicker = ({
@@ -19,11 +20,13 @@ export const DatePicker = ({
   value,
   className,
   placeholder,
+  disabled,
 }: DatePickerProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant={"outline"}
           size={"lg"}
           className={cn(
@@ -43,6 +46,8 @@ export const DatePicker = ({
           selected={value}
           onSelect={(date) => onChange(date as Date)}
           initialFocus
+          disableNavigation={disabled}
+          disabled={disabled}
         />
       </PopoverContent>
     </Popover>

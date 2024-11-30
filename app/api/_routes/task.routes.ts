@@ -11,7 +11,11 @@ import { getTaskController } from "@/src/interface-adapter/controllers/tasks/get
 import { taskQuerySchema } from "@/src/entities/task.entity";
 import { getAllTasksByWorkspacceIdController } from "@/src/interface-adapter/controllers/tasks/get-all-tasks-by-workspace-id.controller";
 import { TaskStatus } from "@/src/entities/task.enums";
-import { createTaskFormSchema } from "@/src/interface-adapter/validation-schemas/task";
+import {
+  createTaskFormSchema,
+  updateTaskExtendedFormSchema,
+} from "@/src/interface-adapter/validation-schemas/task";
+import { updateTaskController } from "@/src/interface-adapter/controllers/tasks/update-task.controller";
 
 const app = new Hono()
   .post(
@@ -97,46 +101,37 @@ const app = new Hono()
   .patch(
     "/:taskId",
     sessionMiddleware,
-    zValidator("json", createTaskFormSchema.partial()),
+    zValidator("json", updateTaskExtendedFormSchema),
     async (c) => {
-      const user = c.get("user");
-      const databases = c.get("databases");
-      const { name, status, projectId, assigneeId, dueDate, description } =
-        c.req.valid("json");
-      console.log("insidE api");
+      let {
+        name,
+        status,
+        assigneeId,
+        dueDate,
+        description,
+        assigneeComment,
+        reviewerComment,
+        reviewStatus,
+      } = c.req.valid("json");
+
       const { taskId } = c.req.param();
 
-      const existingTask = await databases.getDocument(
-        DATABASE_ID,
-        TASKS_COLLECTION_ID,
-        taskId
-      );
-
-      const member = await getMember({
-        databases,
-        workspaceId: existingTask.workspaceId,
-        userId: user.$id,
-      });
-
-      if (!member) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      const task = await databases.updateDocument(
-        DATABASE_ID,
-        TASKS_COLLECTION_ID,
-        taskId,
-        {
+      try {
+        const task = await updateTaskController(taskId, {
           name,
           status,
-          projectId,
-          dueDate,
           assigneeId,
+          dueDate,
           description,
-        }
-      );
-
-      return c.json({ data: task });
+          assigneeComment,
+          reviewerComment,
+          reviewStatus,
+        });
+        return c.json({ data: task }, 200);
+      } catch (error) {
+        const err = error as Error;
+        return c.json({ error: err.message }, 400);
+      }
     }
   )
 

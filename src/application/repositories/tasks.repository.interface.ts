@@ -2,6 +2,7 @@ import {
   TasksCollectionDocument,
   TasksCollectionInput,
   TasksQuery,
+  UpdateTaskFromInput,
 } from "@/src/entities/task.entity";
 import { DocumentList } from "@/src/entities/workspace.entity";
 
@@ -21,4 +22,9 @@ export interface ITasksRepository {
   getById(taskId: string): Promise<TasksCollectionDocument>;
 
   delete(taskId: string): Promise<void>;
+
+  update(
+    taskId: string,
+    taskObj: UpdateTaskFromInput
+  ): Promise<TasksCollectionDocument>;
 }

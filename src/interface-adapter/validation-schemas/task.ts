@@ -1,10 +1,5 @@
-import { TaskStatus } from "@/src/entities/task.enums";
+import { ReviewStatus, TaskStatus } from "@/src/entities/task.enums";
 import { z } from "zod";
-
-export enum ReviewStatus {
-  "ACCEPT" = "ACCEPT",
-  "DECLINE" = "DECLINE",
-}
 
 export const createTaskFormSchema = z.object({
   name: z.string().min(1, "Required"),

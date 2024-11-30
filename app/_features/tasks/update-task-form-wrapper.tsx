@@ -6,6 +6,8 @@ import { useGetMembersInWorkspace } from "../members/hooks/use-get-members-in-wo
 import { useWorkspaceId } from "../workspace/hooks/useWorkspaceId";
 import { UpdateTaskForm } from "./update-task-form ";
 import { useGetTask } from "./hooks/use-get-task";
+import { useGetWorkspacesInfo } from "../workspace/hooks/use-get-workspace-Info";
+import { useCurrent } from "../auth/hooks/use-current";
 
 interface UpdateTaskWrapperProps {
   onCancel: () => void;
@@ -15,7 +17,7 @@ interface UpdateTaskWrapperProps {
 export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
   const workspaceId = useWorkspaceId();
 
-  const { data: task, status: TaskStatus } = useGetTask({
+  const { data, status: TaskStatus } = useGetTask({
     taskId: id,
   });
 
@@ -27,6 +29,11 @@ export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
     id: member.userId,
     name: member.name,
   }));
+  const { data: session } = useCurrent();
+
+  const { data: workspaceInfo } = useGetWorkspacesInfo({ workspaceId });
+
+  if (!workspaceInfo || !workspaceInfo.data || !session) return;
 
   if (TaskStatus === "error") return "task Error";
 
@@ -40,20 +47,26 @@ export const UpdateTaskWrapper = ({ onCancel, id }: UpdateTaskWrapperProps) => {
     );
   }
 
-  const taskData = {
-    id: task.data.tasksCollectionDocument.$id,
-    name: task.data.tasksCollectionDocument.name,
-    dueDate: task.data.tasksCollectionDocument.dueDate,
-    status: task.data.tasksCollectionDocument.status,
-    description: task.data.tasksCollectionDocument.description,
-    assigneeId: task.data.tasksCollectionDocument.assigneeId,
-    projectId: task.data.tasksCollectionDocument.projectId,
+  const task = {
+    name: data.data.tasksCollectionDocument.name,
+    assigneeId: data.data.tasksCollectionDocument.assigneeId,
+    dueDate: data.data.tasksCollectionDocument.dueDate,
+    status: data.data.tasksCollectionDocument.status,
+    email: data.data.usersCollectionDocument.email,
+    workspaceId,
+    workspaceName: workspaceInfo.data.name,
+    id,
+    isAdmin: workspaceInfo.data.userId === session.$id,
+    description: data.data.tasksCollectionDocument.description,
+    assigneeComment: data.data.tasksCollectionDocument.assigneeComment,
+    reviewerComment: data.data.tasksCollectionDocument.reviewerComment,
+    reviewerStatus: data.data.tasksCollectionDocument.reviewStatus,
   };
   return (
     <UpdateTaskForm
       onCancle={onCancel}
       memberOptions={membersOptions ?? []}
-      task={taskData}
+      task={task}
     />
   );
 };
