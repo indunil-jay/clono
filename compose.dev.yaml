@@ -1,0 +1,23 @@
+services:
+    next-app:
+        container_name: clono
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        env_file:
+            - .env.local
+        volumes:
+            - ./:/app
+            - /app/node_modules
+        ports:
+            - "3000:3000"
+        networks:
+            - my_network
+        develop:
+            watch:
+                - path: .
+                  action: sync
+                  target: /app
+
+networks:
+    my_network:
